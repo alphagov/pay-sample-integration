@@ -1,15 +1,32 @@
 {{<layout}}
 
-{{$pageTitle}}
-	Payments team greeting
-{{/pageTitle}}
+{{$pageTitle}}{{title}}{{/pageTitle}}
 
 {{$content}}
 
 <main id="content" role="main">
-
-	<p id="greeting">Amount={{amount}}</p>
-
+  <div class="grid-row">
+    <div class="column-full">
+      <div class="content-wrapper">
+					<h1 class="form-title">{{title}}</h1>
+                <div class="payment-summary">
+                    <div class="inner">
+                        <h2>Payment summary</h2>
+                        <p><strong id="service-name">{{payment.serviceNameCapitalised}}</strong></p>
+                        <p>
+                            Amount to pay: <span class="amount">{{formattedAmount}}</span>
+                        </p>
+                        <form class="form">
+                            <input type='hidden' name='amount' value="{{ amount }}" />
+                            <div class="form-group">
+                                <input type="submit" id="submitStartPayment" name="submitStartPayment" value="Proceed to payment" class="button"/><br />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div>
 </main>
 
 {{/content}}

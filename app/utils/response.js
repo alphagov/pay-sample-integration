@@ -1,6 +1,6 @@
 module.exports = {
-  response : function(accept, res, template, data) {
-    if (accept == "application/json") {
+  response : function(req, res, template, data) {
+    if (req.headers.accept == "application/json") {
       res.setHeader('Content-Type', 'application/json');
       res.json(data);
     } else {

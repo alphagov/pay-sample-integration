@@ -1,6 +1,8 @@
 var express = require('express');
+var initialize = require('express-init');
 var path = require('path');
 var favicon = require('serve-favicon');
+var Price = require('format-price');
 var routes = require(__dirname + '/app/routes.js');
 var port = (process.env.PORT || 3000);
 var app = express();
@@ -9,6 +11,8 @@ app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');
 app.set('vendorViews', __dirname + '/govuk_modules/govuk_template/views/layouts');
 app.set('views', __dirname + '/app/views');
+
+app.use('/public/javascripts', express.static(__dirname + '/public/assets/javascripts'));
 
 app.use('/public', express.static(__dirname + '/public'));
 app.use('/public', express.static(__dirname + '/govuk_modules/govuk_template/assets'));
@@ -19,11 +23,35 @@ app.use(function (req, res, next) {
   next();
 });
 
+// Set up initialization middleware
+var initMiddleware = function (req, res, next) {
+  next();
+};
+initMiddleware.init = function(app, callback) {
+
+  String.prototype.capitalise = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  };
+
+  String.prototype.currency = function() {
+    return Price.format('en-GB', 'GBP', this);
+  };
+
+  callback();
+};
+app.use(initMiddleware);
+
 routes.bind(app);
 
-app.listen(port);
-console.log('');
-console.log('Listening on port ' + port);
-console.log('');
+initialize(app, function(err) {
+  if (err)
+    throw new Error(err);
+
+  app.listen(port);
+  console.log('');
+  console.log('Listening on port ' + port);
+  console.log('');
+
+});
 
 module.exports.getApp = app;

@@ -1,28 +1,33 @@
-var Client = require('node-rest-client').Client;
 var response = require(__dirname + '/utils/response.js').response;
-var client = new Client();
 
 module.exports = {
   bind : function (app) {
     app.get('/', function(req, res) {
-      var amount = Math.floor(Math.random() * 2500) + 1;
-      var data = {'amount': amount};  
+      var amount = "" + Math.floor(Math.random() * 2500) + 1;
+      var data = {
+        'title' : 'Proceed to payment',
+        'amount': amount,
+        'formattedAmount': ("" + (amount/100)).currency()
+      };
       res.render('paystart', data);
     });
     app.get('/greeting', function (req, res) {
       var data = {'greeting': 'Hello', 'name': 'World'};
-      response(req.headers.accept, res, 'greeting', data);
+      response(req, res, 'greeting', data);
     });
 
-    app.get('/charge/:chargeId', function(req, res) {
-      var connectorUrl = process.env.CONNECTOR_URL.replace('{chargeId}', req.params.chargeId);
-      var args = {
-        headers: {}
+    app.get('/payment-type', function (req, res) {
+      var payment = { 'serviceName': 'example service', 'amount': '12.56'};
+      var paymentTypes = [ 'card', 'directdebit', 'cash'];
+      var data = { 'title': 'Select how you want to pay',
+                    'payment': payment,
+                    'paymentTypes': paymentTypes
       };
-      client.get(connectorUrl, args, function(connectorData, connectorResponse) {
-        var uiAmount = (connectorData.amount/100).toFixed(2);
-        response(req.headers.accept, res, 'charge', {"amount": uiAmount});
-      });
+
+      data.payment.serviceNameCapitalised = data.payment.serviceName.capitalise();
+      data.payment.formattedAmount = data.payment.amount.currency();
+      response(req, res, 'choosePaymentType', data);
     });
+
   }
 };
