@@ -10,7 +10,9 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 app.get('/', function(request, response) {
-  response.render('pages/index');
+  var amount = Math.floor(Math.random() * 2500) + 1;
+  var data = {'amount': amount};
+  response.render('pages/index', data);
 });
 
 app.listen(app.get('port'), function() {
