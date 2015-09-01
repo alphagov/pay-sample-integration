@@ -1,26 +1,50 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.1.4",
-  "description": "A sample Node.js app using Express 4",
-  "main": "index.js",
+  "name": "pay-frontend",
+  "description": "Payments Frontend application",
+  "version": "0.0.1-SNAPSHOT",
+  "private": true,
+  "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node start.js",
+    "watch": "chokidar app test -c 'npm run test'",
+    "test": "npm run lint && npm run grunt-test",
+    "lint": "node ./node_modules/.bin/jshint --verbose ./app/*.js",
+    "grunt-test": "node ./node_modules/.bin/grunt test"
   },
   "dependencies": {
-    "ejs": "^2.3.1",
-    "express": "~4.9.x"
+    "express": "4.13.1",
+    "hogan.js": "3.0.2",
+    "readdir": "0.0.6",
+    "minimist": "0.0.8",
+    "govuk_frontend_toolkit": "~4.0.1",
+    "govuk_template_mustache": "~0.13.0",
+    "moment": "^2.10.3",
+    "node-sass": "3.2.0",
+    "serve-favicon": "~2.3.0",
+    "grunt": "0.4.5",
+    "grunt-cli": "0.1.13",
+    "grunt-concurrent": "0.4.3",
+    "grunt-contrib-clean": "0.5.0",
+    "grunt-contrib-copy": "0.5.0",
+    "grunt-contrib-watch": "0.5.3",
+    "grunt-nodemon": "0.3.0",
+    "grunt-sass": "1.0.0",
+    "grunt-text-replace": "0.3.12",
+    "node-rest-client": "^1.5.1"
   },
-  "engines": {
-    "node": "0.12.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
-  },
-  "keywords": [
-    "node",
-    "heroku",
-    "express"
-  ],
-  "license": "MIT"
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "cheerio": "^0.19.0",
+    "chokidar-cli": "latest",
+    "express-writer": "0.0.4",
+    "grunt-mocha-test": "^0.12.7",
+    "jshint": "latest",
+    "mocha": "^2.2.5",
+    "mockserver-client": "^1.0.6",
+    "mockserver-grunt": "^1.0.26",
+    "nock": "^2.10.0",
+    "portfinder": "^0.4.0",
+    "superagent": "^1.2.0",
+    "supertest": "^1.0.1"
+  }
 }
