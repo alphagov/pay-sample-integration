@@ -1,0 +1,13 @@
+.settings
+.project
+*.log
+*.txt
+Dockerfile
+LICENSE
+README.md
+build-local.sh
+docs
+govuk_modules
+node_modules
+public
+test
