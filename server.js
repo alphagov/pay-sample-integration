@@ -4,6 +4,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var Price = require('format-price');
 var routes = require(__dirname + '/app/routes.js');
+var bodyParser = require('body-parser');
 var port = (process.env.PORT || 3000);
 var app = express();
 
@@ -11,6 +12,9 @@ app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');
 app.set('vendorViews', __dirname + '/govuk_modules/govuk_template/views/layouts');
 app.set('views', __dirname + '/app/views');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/public/javascripts', express.static(__dirname + '/public/assets/javascripts'));
 
