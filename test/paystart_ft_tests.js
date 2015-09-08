@@ -31,7 +31,7 @@ portfinder.getPort(function(err, publicApiPort) {
                         'links': [
                             {
                                 'href': frontendCardDetailsPath,
-                                'rel' : 'card_details',
+                                'rel' : 'next_url',
                                 'method' : 'GET'
                             }
                         ]

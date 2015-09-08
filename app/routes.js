@@ -43,7 +43,7 @@ module.exports = {
 
       client.post(publicApiUrl, paymentData, function(data, publicApiResponse) {
         if(publicApiResponse.statusCode == 201) {
-          var frontendCardDetailsUrl = findLinkForRelation(data.links, 'card_details');
+          var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
         }
