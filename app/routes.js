@@ -48,7 +48,7 @@ module.exports = {
           return;
         }
 
-        response(req.headers.accept, res, 'error', {
+        response(req, res, 'error', {
           'message': 'Example service failed to create charge'
         });
       });
