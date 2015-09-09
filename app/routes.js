@@ -48,6 +48,7 @@ module.exports = {
           return;
         }
 
+        res.statusCode = 400;
         response(req, res, 'error', {
           'message': 'Example service failed to create charge'
         });
