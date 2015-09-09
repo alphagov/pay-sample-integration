@@ -16,7 +16,7 @@ module.exports = {
       var data = {
         'title' : 'Proceed to payment',
         'amount': amount,
-        'gateway_account_id': gatewayAccountId,
+        'account_id': gatewayAccountId,
         'formattedAmount': ("" + (amount/100)).currency(),
         'proceed_to_payment_path' : proceedToPaymentPath
       };
@@ -37,7 +37,7 @@ module.exports = {
         },
         data: {
           'amount': parseInt(req.body.amount),
-          'gateway_account_id': req.body.gatewayAccountId
+          'account_id': req.body.accountId
         }
       };
 

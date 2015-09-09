@@ -14,14 +14,13 @@ portfinder.getPort(function (err, publicApiPort) {
     process.env.PUBLICAPI_URL = localServer;
 
     describe('Proceed to payment failures', function () {
-
         it('should error if gateway account is invalid', function (done) {
             publicApiMock
                 .post(
                 publicApiPaymentsUrl,
                 {
                     'amount': 4000,
-                    'gateway_account_id': '11111'
+                    'account_id': '11111'
                 },
                 {
                     'Content-Type': 'application/json'
@@ -41,7 +40,7 @@ portfinder.getPort(function (err, publicApiPort) {
                 .set('Accept', 'application/json')
                 .send({
                     'amount': '4000',
-                    'gatewayAccountId': '11111'
+                    'accountId': '11111'
                 })
                 .expect(400,
                     {
@@ -56,14 +55,13 @@ portfinder.getPort(function (err, publicApiPort) {
     });
 
     describe('Proceed payment scenario', function () {
-
         it('should respond with redirect URL for payment card capture view', function (done) {
             publicApiMock
                 .post(
                 publicApiPaymentsUrl,
                 {
                     'amount': 5000,
-                    'gateway_account_id': '12345'
+                    'account_id': '12345'
                 },
                 {
                     'Content-Type': 'application/json'
@@ -88,7 +86,7 @@ portfinder.getPort(function (err, publicApiPort) {
                 .post('/proceed-to-payment')
                 .send({
                     'amount': '5000',
-                    'gatewayAccountId': '12345'
+                    'accountId': '12345'
                 })
                 .expect('Location', frontendCardDetailsPath)
                 .expect(303)
