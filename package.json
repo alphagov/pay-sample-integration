@@ -32,7 +32,9 @@
     "node-rest-client": "^1.5.1",
     "node-sass": "3.2.0",
     "readdir": "0.0.6",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.3.0",
+    "array.prototype.find": "1.0.0",
+    "body-parser": "1.13.3"
   },
   "devDependencies": {
     "express-writer": "0.0.4",
@@ -42,7 +44,8 @@
     "grunt-mocha-test": "^0.12.7",
     "jshint": "latest",
     "mocha": "^2.2.5",
-    "nock": "^2.9.0",
+    "nock": "^2.10.0",
+    "portfinder": "^0.4.0",
     "superagent": "^1.2.0",
     "supertest": "^1.0.1"
   }

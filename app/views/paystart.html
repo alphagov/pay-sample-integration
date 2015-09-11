@@ -16,8 +16,9 @@
                         <p>
                             Amount to pay: <span class="amount">{{formattedAmount}}</span>
                         </p>
-                        <form class="form">
+                        <form class="form" action="{{ proceed_to_payment_path }}" method="post">
                             <input type='hidden' name='amount' value="{{ amount }}" />
+                            <input type='hidden' name='accountId' value="{{ account_id }}" />
                             <div class="form-group">
                                 <input type="submit" id="submitStartPayment" name="submitStartPayment" value="Proceed to payment" class="button"/><br />
                             </div>
