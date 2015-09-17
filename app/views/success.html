@@ -1,0 +1,26 @@
+{{<layout}}
+
+{{$pageTitle}}{{title}}{{/pageTitle}}
+
+{{$content}}
+
+<main id="content" role="main">
+  <div class="grid-row">
+    <div class="column-full">
+      <div class="content-wrapper">
+					<h1 class="form-title">{{title}}</h1>
+                <div class="payment-summary">
+                    <div class="inner">
+                        <h2>Payment summary</h2>
+                        <p> Payment of: <strong id="service-name">Example Service</strong></p>
+                        <p> Amount paid: <span class="amount">{{formattedAmount}}</span></p>
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+</main>
+
+{{/content}}
+
+{{/layout}}
