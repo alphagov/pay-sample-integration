@@ -1,4 +1,5 @@
 require('array.prototype.find');
+var logger = require('winston');
 
 var response = require(__dirname + '/utils/response.js').response;
 
@@ -14,6 +15,8 @@ module.exports = {
     var PUBLIC_API_PAYMENTS_PATH = '/v1/payments/';
 
     app.get('/', function(req, res) {
+      logger.info('GET /');
+
       var amount = "" + Math.floor(Math.random() * 2500) + 1;
       var data = {
         'title' : 'Proceed to payment',
@@ -26,7 +29,9 @@ module.exports = {
     });
 
     app.post(PAYMENT_PATH, function (req, res) {
+      logger.info('POST ' + PAYMENT_PATH);
       var successPage = process.env.DEMO_SERVER_URL + SUCCESS_PATH + '{paymentId}';
+
       var paymentData = {
         headers: {
           "Content-Type": "application/json"
@@ -42,6 +47,7 @@ module.exports = {
       client.post(publicApiUrl, paymentData, function(data, publicApiResponse) {
         if(publicApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
+          logger.info('Redirecting user to: ' + frontendCardDetailsUrl.href);
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
         }

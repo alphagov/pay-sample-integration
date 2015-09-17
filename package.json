@@ -34,7 +34,8 @@
     "readdir": "0.0.6",
     "serve-favicon": "~2.3.0",
     "array.prototype.find": "1.0.0",
-    "body-parser": "1.13.3"
+    "body-parser": "1.13.3",
+    "winston": "^1.0.1"
   },
   "devDependencies": {
     "express-writer": "0.0.4",
