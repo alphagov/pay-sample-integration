@@ -25,7 +25,6 @@ portfinder.getPort(function (err, publicApiPort) {
         it('should show a success page when payment captured', function (done) {
             process.env.PUBLICAPI_URL = publicApiMockUrl;
             var amount = 3454;
-            var expectedAmountFormat = '£34.54';
 
             whenPublicApiReceivesGetPayment()
                 .reply(200, {
@@ -45,7 +44,8 @@ portfinder.getPort(function (err, publicApiPort) {
 
             getSuccessPageResponse()
                 .expect(200, {
-                    'formattedAmount': expectedAmountFormat
+                    'title': 'Payment successful',
+                    'formattedAmount': '£34.54'
                 })
                 .expect('Content-Type', 'application/json; charset=utf-8')
                 .end(done);
@@ -72,7 +72,6 @@ portfinder.getPort(function (err, publicApiPort) {
         it('should show an error page when status not "SUCCEEDED"', function (done) {
             process.env.PUBLICAPI_URL = publicApiMockUrl;
             var amount = 3454;
-            var expectedAmountFormat = '£34.54';
 
             whenPublicApiReceivesGetPayment()
                 .reply(200, {

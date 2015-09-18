@@ -9,11 +9,9 @@ var client = new Client();
 
 module.exports = {
   bind : function (app) {
-    var proceedToPaymentPath = "/proceed-to-payment";
-    var successPath = "/success/";
-
-    var publicApiPaymentsPath = '/v1/payments/';
-    var paymentSuccessStatus = "SUCCEEDED";
+    var PAYMENT_PATH = "/proceed-to-payment";
+    var SUCCESS_PATH = "/success/";
+    var PUBLIC_API_PAYMENTS_PATH = '/v1/payments/';
 
     app.get('/', function(req, res) {
       var amount = "" + Math.floor(Math.random() * 2500) + 1;
@@ -22,7 +20,7 @@ module.exports = {
         'amount': amount,
         'account_id': gatewayAccountId,
         'formattedAmount': ("" + (amount/100)).currency(),
-        'proceed_to_payment_path' : proceedToPaymentPath
+        'proceed_to_payment_path' : PAYMENT_PATH
       };
       res.render('paystart', data);
     });
@@ -32,8 +30,8 @@ module.exports = {
       response(req, res, 'greeting', data);
     });
 
-    app.post(proceedToPaymentPath, function (req, res) {
-      var successPage = process.env.DEMO_SERVER_URL + successPath + '{paymentId}';
+    app.post(PAYMENT_PATH, function (req, res) {
+      var successPage = process.env.DEMO_SERVER_URL + SUCCESS_PATH + '{paymentId}';
       var paymentData = {
         headers: {
           "Content-Type": "application/json"
@@ -45,7 +43,7 @@ module.exports = {
         }
       };
 
-      var publicApiUrl = process.env.PUBLICAPI_URL + publicApiPaymentsPath;
+      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
       client.post(publicApiUrl, paymentData, function(data, publicApiResponse) {
         if(publicApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
@@ -60,18 +58,19 @@ module.exports = {
       });
     });
 
-    app.get(successPath + ':paymentId', function(req, res) {
+    app.get(SUCCESS_PATH + ':paymentId', function(req, res) {
       var paymentId = req.params.paymentId;
-      var publicApiUrl = process.env.PUBLICAPI_URL + publicApiPaymentsPath + paymentId;
+      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + paymentId;
       var args = { headers: { 'Accept' : 'application/json' } };
 
       client.get(publicApiUrl, args, function(data, publicApiResponse) {
-        if(publicApiResponse.statusCode == 200 && data.status === paymentSuccessStatus) {
+        if(publicApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {
           var responseData = {
-                  'formattedAmount': ("" + (data.amount/100)).currency(),
-            };
-            response(req, res, 'success', responseData);
-            return;
+            'title' : 'Payment successful',
+            'formattedAmount': ("" + (data.amount/100)).currency(),
+          };
+          response(req, res, 'success', responseData);
+          return;
         }
         response(req, res, 'error', {
           'message': 'Invalid payment.'
