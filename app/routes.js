@@ -25,11 +25,6 @@ module.exports = {
       res.render('paystart', data);
     });
 
-    app.get('/greeting', function (req, res) {
-      var data = {'greeting': 'Hello', 'name': 'World'};
-      response(req, res, 'greeting', data);
-    });
-
     app.post(PAYMENT_PATH, function (req, res) {
       var successPage = process.env.DEMO_SERVER_URL + SUCCESS_PATH + '{paymentId}';
       var paymentData = {
@@ -77,7 +72,6 @@ module.exports = {
         });
       });
     });
-
 
     function findLinkForRelation(links, rel) {
       return links.find(function(link) {
