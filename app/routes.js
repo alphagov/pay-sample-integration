@@ -9,7 +9,9 @@ var client = new Client();
 
 module.exports = {
   bind : function (app) {
-    var proceedToPaymentPath = "/proceed-to-payment";
+    var PAYMENT_PATH = "/proceed-to-payment";
+    var SUCCESS_PATH = "/success/";
+    var PUBLIC_API_PAYMENTS_PATH = '/v1/payments/';
 
     app.get('/', function(req, res) {
       var amount = "" + Math.floor(Math.random() * 2500) + 1;
@@ -18,7 +20,7 @@ module.exports = {
         'amount': amount,
         'account_id': gatewayAccountId,
         'formattedAmount': ("" + (amount/100)).currency(),
-        'proceed_to_payment_path' : proceedToPaymentPath
+        'proceed_to_payment_path' : PAYMENT_PATH
       };
       res.render('paystart', data);
     });
@@ -28,19 +30,20 @@ module.exports = {
       response(req, res, 'greeting', data);
     });
 
-    app.post(proceedToPaymentPath, function (req, res) {
-      var publicApiUrl = process.env.PUBLICAPI_URL + '/v1/payments';
-
+    app.post(PAYMENT_PATH, function (req, res) {
+      var successPage = process.env.DEMO_SERVER_URL + SUCCESS_PATH + '{paymentId}';
       var paymentData = {
         headers: {
           "Content-Type": "application/json"
         },
         data: {
           'amount': parseInt(req.body.amount),
-          'account_id': req.body.accountId
+          'account_id': req.body.accountId,
+          'return_url': successPage
         }
       };
 
+      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
       client.post(publicApiUrl, paymentData, function(data, publicApiResponse) {
         if(publicApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
@@ -54,6 +57,27 @@ module.exports = {
         });
       });
     });
+
+    app.get(SUCCESS_PATH + ':paymentId', function(req, res) {
+      var paymentId = req.params.paymentId;
+      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + paymentId;
+      var args = { headers: { 'Accept' : 'application/json' } };
+
+      client.get(publicApiUrl, args, function(data, publicApiResponse) {
+        if(publicApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {
+          var responseData = {
+            'title' : 'Payment successful',
+            'formattedAmount': ("" + (data.amount/100)).currency(),
+          };
+          response(req, res, 'success', responseData);
+          return;
+        }
+        response(req, res, 'error', {
+          'message': 'Invalid payment.'
+        });
+      });
+    });
+
 
     function findLinkForRelation(links, rel) {
       return links.find(function(link) {
