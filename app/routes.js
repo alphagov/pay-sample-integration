@@ -17,6 +17,10 @@ module.exports = {
     app.get('/', function(req, res) {
       logger.info('GET /');
 
+      if (req.query.authToken) {
+        req.session_state.authToken = req.query.authToken;
+      }
+
       var amount = "" + Math.floor(Math.random() * 2500) + 1;
       var data = {
         'title' : 'Proceed to payment',
@@ -43,6 +47,10 @@ module.exports = {
         }
       };
 
+      if (req.session_state.authToken) {
+        paymentData.headers.Authorization="Bearer " + req.session_state.authToken;
+      }
+
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
       client.post(publicApiUrl, paymentData, function(data, publicApiResponse) {
         if(publicApiResponse.statusCode == 201) {
@@ -63,6 +71,10 @@ module.exports = {
       var paymentId = req.params.paymentId;
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + paymentId;
       var args = { headers: { 'Accept' : 'application/json' } };
+
+      if (req.session_state.authToken) {
+        paymentData.headers.Authorization="Bearer " + req.session_state.authToken;
+      }
 
       client.get(publicApiUrl, args, function(data, publicApiResponse) {
         if(publicApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {

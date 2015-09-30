@@ -8,6 +8,8 @@ var bodyParser = require('body-parser');
 var port = (process.env.PORT || 3000);
 var app = express();
 
+var clientSessions = require("client-sessions");
+
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 app.set('view engine', 'html');
 app.set('vendorViews', __dirname + '/govuk_modules/govuk_template/views/layouts');
@@ -26,6 +28,12 @@ app.use(function (req, res, next) {
   res.locals.assetPath = '/public/';
   next();
 });
+
+app.use(clientSessions({
+  cookieName: 'session_state',
+  secret: "Demo Service Key"
+}));
+
 
 // Set up initialization middleware
 var initMiddleware = function (req, res, next) {
