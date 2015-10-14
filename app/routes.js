@@ -7,27 +7,30 @@ var gatewayAccountId = process.env.TEST_GATEWAY_ACCOUNT_ID;
 
 var Client = require('node-rest-client').Client;
 var client = new Client();
+var TOKENID_PREFIX = "t_";
 
 module.exports = {
-  bind : function (app) {
+  bind: function (app) {
     var PAYMENT_PATH = "/proceed-to-payment";
     var SUCCESS_PATH = "/success/";
     var PUBLIC_API_PAYMENTS_PATH = '/v1/payments/';
 
-    app.get('/', function(req, res) {
+    app.get('/', function (req, res) {
       logger.info('GET /');
 
+      var uniqueSessionRef = TOKENID_PREFIX + randomIntNotInSession(req);
       if (req.query.authToken) {
-        req.session_state.authToken = req.query.authToken;
+        req.session_state[uniqueSessionRef] = req.query.authToken;
       }
 
       var amount = "" + Math.floor(Math.random() * 2500) + 1;
       var data = {
-        'title' : 'Proceed to payment',
+        'title': 'Proceed to payment',
         'amount': amount,
         'account_id': gatewayAccountId,
-        'formattedAmount': ("" + (amount/100)).currency(),
-        'proceed_to_payment_path' : PAYMENT_PATH
+        'formattedAmount': ("" + (amount / 100)).currency(),
+        'proceed_to_payment_path': PAYMENT_PATH,
+        'token_id': uniqueSessionRef
       };
       res.render('paystart', data);
     });
@@ -48,12 +51,12 @@ module.exports = {
       };
 
       if (req.session_state.authToken) {
-        paymentData.headers.Authorization="Bearer " + req.session_state.authToken;
+        paymentData.headers.Authorization = "Bearer " + req.session_state[req.body.tokenId];
       }
 
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
-      client.post(publicApiUrl, paymentData, function(data, publicApiResponse) {
-        if(publicApiResponse.statusCode == 201) {
+      client.post(publicApiUrl, paymentData, function (data, publicApiResponse) {
+        if (publicApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
           logger.info('Redirecting user to: ' + frontendCardDetailsUrl.href);
           res.redirect(303, frontendCardDetailsUrl.href);
@@ -67,20 +70,20 @@ module.exports = {
       });
     });
 
-    app.get(SUCCESS_PATH + ':paymentId', function(req, res) {
+    app.get(SUCCESS_PATH + ':paymentId', function (req, res) {
       var paymentId = req.params.paymentId;
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + paymentId;
-      var args = { headers: { 'Accept' : 'application/json' } };
+      var args = {headers: {'Accept': 'application/json'}};
 
       if (req.session_state.authToken) {
-        paymentData.headers.Authorization="Bearer " + req.session_state.authToken;
+        paymentData.headers.Authorization = "Bearer " + req.session_state.authToken;
       }
 
-      client.get(publicApiUrl, args, function(data, publicApiResponse) {
-        if(publicApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {
+      client.get(publicApiUrl, args, function (data, publicApiResponse) {
+        if (publicApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {
           var responseData = {
-            'title' : 'Payment successful',
-            'formattedAmount': ("" + (data.amount/100)).currency(),
+            'title': 'Payment successful',
+            'formattedAmount': ("" + (data.amount / 100)).currency(),
           };
           response(req, res, 'success', responseData);
           return;
@@ -92,9 +95,21 @@ module.exports = {
     });
 
     function findLinkForRelation(links, rel) {
-      return links.find(function(link) {
+      return links.find(function (link) {
         return link.rel === rel;
       });
     }
+
+    function randomIntNotInSession(req) {
+      var theInt = -1;
+      while (theInt < 0) {
+        theInt = Math.floor(Math.random() * (1000 - 1) + 1);
+        if (req.session_state[TOKENID_PREFIX + theInt]) {
+          theInt = -1;
+        }
+      }
+      return theInt;
+    }
+
   }
 };
