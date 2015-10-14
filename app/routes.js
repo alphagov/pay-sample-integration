@@ -18,9 +18,9 @@ module.exports = {
     app.get('/', function (req, res) {
       logger.info('GET /');
 
-      var tokenId = TOKENID_PREFIX + randomTokenKeyNotInSeesion(req);
+      var uniqueSessionRef = TOKENID_PREFIX + randomIntNotInSession(req);
       if (req.query.authToken) {
-        req.session_state[tokenId] = req.query.authToken;
+        req.session_state[uniqueSessionRef] = req.query.authToken;
       }
 
       var amount = "" + Math.floor(Math.random() * 2500) + 1;
@@ -30,7 +30,7 @@ module.exports = {
         'account_id': gatewayAccountId,
         'formattedAmount': ("" + (amount / 100)).currency(),
         'proceed_to_payment_path': PAYMENT_PATH,
-        'token_id': tokenId
+        'token_id': uniqueSessionRef
       };
       res.render('paystart', data);
     });
@@ -100,7 +100,7 @@ module.exports = {
       });
     }
 
-    function randomTokenKeyNotInSeesion(req) {
+    function randomIntNotInSession(req) {
       var theInt = -1;
       while (theInt < 0) {
         theInt = Math.floor(Math.random() * (1000 - 1) + 1);
