@@ -49,8 +49,8 @@ module.exports = {
           'return_url': successPage
         }
       };
-
-      if (req.session_state.authToken) {
+      
+      if (req.session_state[req.body.tokenId]) {
         paymentData.headers.Authorization = "Bearer " + req.session_state[req.body.tokenId];
       }
 
