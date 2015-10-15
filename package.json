@@ -4,6 +4,9 @@
   "version": "0.0.1-SNAPSHOT",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": "0.12.x"
+  },
   "scripts": {
     "start": "node start.js",
     "watch": "chokidar app test *.js --initial -c 'npm run test'",
