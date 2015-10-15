@@ -3,8 +3,6 @@ var logger = require('winston');
 
 var response = require(__dirname + '/utils/response.js').response;
 
-var gatewayAccountId = process.env.TEST_GATEWAY_ACCOUNT_ID;
-
 var Client = require('node-rest-client').Client;
 var client = new Client();
 var TOKENID_PREFIX = "t_";
@@ -27,7 +25,6 @@ module.exports = {
       var data = {
         'title': 'Proceed to payment',
         'amount': amount,
-        'account_id': gatewayAccountId,
         'formattedAmount': ("" + (amount / 100)).currency(),
         'proceed_to_payment_path': PAYMENT_PATH,
         'token_id': uniqueSessionRef
