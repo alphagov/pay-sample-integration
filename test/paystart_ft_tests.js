@@ -1,12 +1,15 @@
-var response_to = require(__dirname + '/utils/test_helpers.js').response_to;
+process.env.SESSION_ENCRYPTION_KEY = "Demo Service Key";
+
 var app = require(__dirname + '/../server.js').getApp;
 var request = require('supertest');
 var nock = require('nock');
 var portfinder = require('portfinder');
+var TOKEN_PREFIX = 't_';
 
 portfinder.getPort(function (err, publicApiPort) {
     var publicApiMockUrl = 'http://localhost:' + publicApiPort;
     var chargeId = '23144323';
+    var chargeIdReference = '54321';
     var frontendCardDetailsPath = '/charge/' + chargeId;
     var publicApiPaymentsUrl = '/v1/payments/';
     var publicApiMock = nock(publicApiMockUrl);
@@ -29,10 +32,10 @@ portfinder.getPort(function (err, publicApiPort) {
             process.env.PUBLICAPI_URL = publicApiMockUrl;
             process.env.DEMO_SERVER_URL = localServerUrl;
 
-            whenPublicApiReceivesPost( {
+            whenPublicApiReceivesPost({
                 'amount': 4000,
                 'account_id': '11111',
-                'return_url': localServerUrl + '/success/{paymentId}'
+                'return_url': localServerUrl + '/success/' + chargeIdReference
             }).reply( 400, {
                 'message': 'Unknown gateway account: 11111'
             }, {
@@ -41,7 +44,8 @@ portfinder.getPort(function (err, publicApiPort) {
 
             postProceedResponseWith( {
                     'amount': '4000',
-                    'accountId': '11111'
+                    'accountId': '11111',
+                    'tokenId':TOKEN_PREFIX + chargeIdReference
             }).expect(400, {
                 'message': 'Example service failed to create charge'
             }, {
@@ -61,7 +65,7 @@ portfinder.getPort(function (err, publicApiPort) {
             whenPublicApiReceivesPost( {
                 'amount': 5000,
                 'account_id': '12345',
-                'return_url': localServerUrl + '/success/{paymentId}'
+                'return_url': localServerUrl + '/success/' + chargeIdReference
             }).reply( 201, {
                     'links': [ {
                         'href': frontendCardDetailsPath,
@@ -75,7 +79,8 @@ portfinder.getPort(function (err, publicApiPort) {
 
             postProceedResponseWith( {
                 'amount': '5000',
-                'accountId': '12345'
+                'accountId': '12345',
+                'tokenId':TOKEN_PREFIX + chargeIdReference
             }).expect('Location', frontendCardDetailsPath)
               .expect(303)
               .end(done);

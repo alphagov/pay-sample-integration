@@ -1,3 +1,4 @@
+var response_to = require(__dirname + '/utils/test_helpers.js').response_to;
 var renderer = require(__dirname + '/utils/renderer.js').renderer;
 var cheerio = require('cheerio');
 var assert = require('chai').assert;

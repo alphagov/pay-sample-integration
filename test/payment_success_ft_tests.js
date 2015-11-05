@@ -1,15 +1,24 @@
+process.env.SESSION_ENCRYPTION_KEY = "Demo Service Key";
+
 var app = require(__dirname + '/../server.js').getApp;
 var request = require('supertest');
 var nock = require('nock');
 var portfinder = require('portfinder');
 
+var clientSessions = require("client-sessions");
+var sessionConfig = {
+  'cookieName': 'session_state',
+  'secret':     process.env.SESSION_ENCRYPTION_KEY
+};
+
 portfinder.getPort(function (err, publicApiPort) {
     var publicApiMockUrl = 'http://localhost:' + publicApiPort;
-    var chargeId = '23144323';
+    var chargeReferenceId = 98765;
+    var chargeId = '112233';
     var publicApiGetPaymentsUrl = '/v1/payments/' + chargeId;
     var publicApiMock = nock(publicApiMockUrl);
 
-    var successPath = "/success/" + chargeId;
+    var successPath = "/success/" + chargeReferenceId;
 
     function whenPublicApiReceivesGetPayment() {
         return publicApiMock.matchHeader('Accept', 'application/json')
@@ -17,8 +26,15 @@ portfinder.getPort(function (err, publicApiPort) {
     }
 
     function getSuccessPageResponse() {
+      var sessionData = {};
+      sessionData['t_'+chargeReferenceId] = 'a-auth-token';
+      sessionData['c_'+chargeReferenceId] = chargeId;
+
+      var encryptedSession = clientSessions.util.encode(sessionConfig, sessionData);
+
         return request(app).get(successPath)
-                           .set('Accept', 'application/json');
+          .set('Cookie','session_state=' + encryptedSession)
+          .set('Accept', 'application/json');
     }
 
     describe('Payment workflow complete', function () {
@@ -30,8 +46,8 @@ portfinder.getPort(function (err, publicApiPort) {
                 .reply(200, {
                     'payment_id': chargeId,
                     'amount': amount,
-                    'status': 'SUCCEEDED',
-                    'return_url': 'http://not.used.in/this/test',
+                    'status': 'IN PROGRESS',
+                    'return_url': 'http://not.used.in/this/23423535',
                     'links': [ {
                                 'href': 'http://also.irrelevant.com/',
                                 'rel': 'self',
@@ -78,7 +94,7 @@ portfinder.getPort(function (err, publicApiPort) {
                     'payment_id': chargeId,
                     'amount': amount,
                     'status': 'BLA_BLA',
-                    'return_url': 'http://not.used.in/this/test',
+                    'return_url': 'http://not.used.in/this/2324523',
                     'links': [ {
                                 'href': 'http://also.irrelevant.com/',
                                 'rel': 'self',

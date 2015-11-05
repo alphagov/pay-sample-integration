@@ -6,12 +6,18 @@ var response = require(__dirname + '/utils/response.js').response;
 var Client = require('node-rest-client').Client;
 var client = new Client();
 var TOKENID_PREFIX = "t_";
+var CHARGE_ID_PREFIX = "c_";
 
 module.exports = {
   bind: function (app) {
     var PAYMENT_PATH = "/proceed-to-payment";
     var SUCCESS_PATH = "/success/";
     var PUBLIC_API_PAYMENTS_PATH = '/v1/payments/';
+
+    function extractChargeId(frontEndRedirectionUrl) {
+      var chargeIdWithOneTimeToken = frontEndRedirectionUrl.split('/').pop();
+      return chargeIdWithOneTimeToken.split('?')[0];
+    }
 
     app.get('/', function (req, res) {
       logger.info('GET /');
@@ -34,7 +40,8 @@ module.exports = {
 
     app.post(PAYMENT_PATH, function (req, res) {
       logger.info('POST ' + PAYMENT_PATH);
-      var successPage = process.env.DEMO_SERVER_URL + SUCCESS_PATH + '{paymentId}';
+      var chargeIdReference = req.body.tokenId.split('_').pop();
+      var successPage = process.env.DEMO_SERVER_URL + SUCCESS_PATH + chargeIdReference;
 
       var paymentData = {
         headers: {
@@ -46,7 +53,7 @@ module.exports = {
           'return_url': successPage
         }
       };
-      
+
       if (req.session_state[req.body.tokenId]) {
         paymentData.headers.Authorization = "Bearer " + req.session_state[req.body.tokenId];
       }
@@ -55,6 +62,9 @@ module.exports = {
       client.post(publicApiUrl, paymentData, function (data, publicApiResponse) {
         if (publicApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
+          var chargeId = extractChargeId(frontendCardDetailsUrl.href);
+
+          req.session_state[CHARGE_ID_PREFIX + chargeIdReference] = chargeId;
           logger.info('Redirecting user to: ' + frontendCardDetailsUrl.href);
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
@@ -67,17 +77,18 @@ module.exports = {
       });
     });
 
-    app.get(SUCCESS_PATH + ':paymentId', function (req, res) {
-      var paymentId = req.params.paymentId;
-      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + paymentId;
-      var args = {headers: {'Accept': 'application/json'}};
+    app.get(SUCCESS_PATH + ':chargeIdReference', function (req, res) {
+      var chargeIdReference = req.params.chargeIdReference;
+      var paymentId = req.session_state[CHARGE_ID_PREFIX + chargeIdReference];
 
-      if (req.session_state.authToken) {
-        paymentData.headers.Authorization = "Bearer " + req.session_state.authToken;
-      }
+      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + paymentId;
+      var args = {
+        headers: {'Accept': 'application/json',
+                  'Authorization': 'Bearer ' + req.session_state[TOKENID_PREFIX + chargeIdReference] }
+      };
 
       client.get(publicApiUrl, args, function (data, publicApiResponse) {
-        if (publicApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {
+        if (publicApiResponse.statusCode == 200 && data.status === "IN PROGRESS") {
           var responseData = {
             'title': 'Payment successful',
             'formattedAmount': ("" + (data.amount / 100)).currency(),
