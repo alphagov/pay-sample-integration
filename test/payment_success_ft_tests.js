@@ -47,7 +47,7 @@ portfinder.getPort(function (err, publicApiPort) {
                     'payment_id': chargeId,
                     'amount': amount,
                     'status': 'IN PROGRESS',
-                    'return_url': 'http://not.used.in/this/23423535',
+                    'return_url': 'http://not.used.in/this/'+ chargeReferenceId,
                     'links': [ {
                                 'href': 'http://also.irrelevant.com/',
                                 'rel': 'self',
@@ -60,7 +60,9 @@ portfinder.getPort(function (err, publicApiPort) {
 
             getSuccessPageResponse()
                 .expect(200, {
-                    'title': 'Payment successful',
+                    'title': 'Your payment has been successful',
+                    'paymentReference': chargeReferenceId + '-' + chargeId,
+                    'paymentDescription': 'Demo Transaction',
                     'formattedAmount': '£34.54'
                 })
                 .expect('Content-Type', 'application/json; charset=utf-8')
