@@ -60,7 +60,8 @@ portfinder.getPort(function (err, publicApiPort) {
 
             getSuccessPageResponse()
                 .expect(200, {
-                    'title': 'Your payment has been successful',
+                    'title': 'Payment confirmation',
+                    'confirmationMessage': 'Your payment has been successful',
                     'paymentReference': chargeReferenceId + '-' + chargeId,
                     'paymentDescription': 'Demo Transaction',
                     'formattedAmount': '£34.54'

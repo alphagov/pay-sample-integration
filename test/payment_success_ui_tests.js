@@ -7,7 +7,9 @@ var assert = require('chai').assert;
 describe('The payment success view', function() {
   var expectedAmountFormat = '£50.00'
   var templateData = {
-    'title': 'Payment successful',
+    'title': 'Payment confirmation',
+    'confirmationMessage': 'Your payment has been successful',
+    'paymentReference': 100 + '-' + 2,
     'formattedAmount': expectedAmountFormat
   };
 
@@ -25,16 +27,16 @@ describe('The payment success view', function() {
     });
   });
 
-  it('should render the demo service name', function(done) {
+  it('should render the payment reference', function(done) {
     renderSuccessPage(templateData, function($) {
-      $('#service-name').text().should.equal('Demo Service');
+      $('#payment-reference').text().should.equal('100-2');
       done();
     });
   });
 
   it('should render the a title', function(done) {
     renderSuccessPage(templateData, function($) {
-      $('.form-title').text().should.equal('Payment successful');
+      $('.form-title').text().should.equal('Your payment has been successful');
       done();
     });
   });
