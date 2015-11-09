@@ -82,7 +82,8 @@ portfinder.getPort(function (err, publicApiPort) {
 
             getSuccessPageResponse()
                 .expect(200, {
-                    'message': 'Invalid payment.'
+                    'message': 'Sorry, your payment has failed. Please contact us with following reference number.',
+                    'paymentReference': chargeReferenceId + '-' + chargeId
                 })
                 .expect('Content-Type', 'application/json; charset=utf-8')
                 .end(done);
@@ -110,7 +111,8 @@ portfinder.getPort(function (err, publicApiPort) {
 
             getSuccessPageResponse()
                 .expect(200, {
-                    'message': 'Invalid payment.'
+                  'message': 'Sorry, your payment has failed. Please contact us with following reference number.',
+                  'paymentReference': chargeReferenceId + '-' + chargeId
                 })
                 .expect('Content-Type', 'application/json; charset=utf-8')
                 .end(done);

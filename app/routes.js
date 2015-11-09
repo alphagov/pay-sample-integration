@@ -100,7 +100,8 @@ module.exports = {
           return;
         }
         response(req, res, 'error', {
-          'message': 'Invalid payment.'
+          'message': 'Sorry, your payment has failed. Please contact us with following reference number.',
+          'paymentReference': chargeIdReference + '-' + paymentId
         });
       });
     });
