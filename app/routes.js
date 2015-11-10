@@ -88,7 +88,7 @@ module.exports = {
       };
 
       client.get(publicApiUrl, args, function (data, publicApiResponse) {
-        if (publicApiResponse.statusCode == 200 && data.status === "IN PROGRESS") {
+        if (publicApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {
           var responseData = {
             'title': 'Payment confirmation',
             'confirmationMessage': 'Your payment has been successful',

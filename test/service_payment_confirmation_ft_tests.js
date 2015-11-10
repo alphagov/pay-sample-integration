@@ -46,7 +46,7 @@ portfinder.getPort(function (err, publicApiPort) {
                 .reply(200, {
                     'payment_id': chargeId,
                     'amount': amount,
-                    'status': 'IN PROGRESS',
+                    'status': 'SUCCEEDED',
                     'return_url': 'http://not.used.in/this/'+ chargeReferenceId,
                     'links': [ {
                                 'href': 'http://also.irrelevant.com/',
