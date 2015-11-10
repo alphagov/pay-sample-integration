@@ -13,9 +13,6 @@
                     <div class="inner">
                         <h2>Payment summary</h2>
                         <p><strong id="service-name">{{payment.serviceNameCapitalised}}</strong></p>
-                        <p>
-                            Amount to pay: <span class="amount">{{formatted_amount}}</span>
-                        </p>
                         <form class="form" action="{{ proceed_to_payment_path }}" method="post">
                             <input type='hidden' name='amount' value="{{ amount }}" />
                             <input type='hidden' name='paymentReference' value="{{ payment_reference }}" />
