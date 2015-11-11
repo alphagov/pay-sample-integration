@@ -59,6 +59,9 @@ module.exports = {
 
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
       client.post(publicApiUrl, paymentData, function (data, publicApiResponse) {
+
+        logger.info('Publicapi response: ' + data);
+
         if (publicApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
           var chargeId = extractChargeId(frontendCardDetailsUrl.href);
@@ -71,7 +74,12 @@ module.exports = {
 
         res.statusCode = 400;
         response(req, res, 'error', {
-          'message': 'Example service failed to create charge'
+          'message': 'Demo service failed to create charge'
+        });
+      }).on('error', function (err) {
+        logger.error('Exception raised calling publicapi: ' + err);
+        response(req, res, 'error', {
+            'message': 'Demo service failed to create charge'
         });
       });
     });

@@ -44,7 +44,7 @@ portfinder.getPort(function (err, publicApiPort) {
                     'amount': '4000',
                     'paymentReference': paymentReference
             }).expect(400, {
-                'message': 'Example service failed to create charge'
+                'message': 'Demo service failed to create charge'
             }, {
                 'Content-Type': 'application/json'
             }).end(done);
