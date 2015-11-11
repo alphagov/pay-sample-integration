@@ -49,7 +49,6 @@ module.exports = {
         },
         data: {
           'amount': parseInt(req.body.amount),
-          'account_id': req.body.accountId,
           'return_url': successPage
         }
       };
