@@ -46,6 +46,7 @@ module.exports = {
         },
         data: {
           'amount': parseInt(req.body.amount),
+          'description': req.body.description,
           'return_url': successPage
         }
       };

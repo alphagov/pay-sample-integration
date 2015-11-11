@@ -14,7 +14,8 @@
                         <h2>Payment summary</h2>
                         <p><strong id="service-name">{{payment.serviceNameCapitalised}}</strong></p>
                         <form class="form" action="{{ proceed_to_payment_path }}" method="post">
-                            <input type='hidden' name='amount' value="{{ amount }}" />
+                            <p>Payment description: <input type='text' name='description' /></p>
+                            <p>Amount: <input type='text' name='amount' /></p>
                             <input type='hidden' name='paymentReference' value="{{ payment_reference }}" />
                             <div class="form-group">
                                 <input type="submit" id="submitStartPayment" name="submitStartPayment" value="Proceed to payment" class="button"/><br />
