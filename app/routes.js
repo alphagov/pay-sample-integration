@@ -22,26 +22,26 @@ module.exports = {
     app.get('/', function (req, res) {
       logger.info('GET /');
 
-      var uniqueSessionRef = AUTH_TOKEN_PREFIX + randomIntNotInSession(req);
+      var paymentReference = randomIntNotInSession(req);
       if (req.query.authToken) {
-        req.session_state[uniqueSessionRef] = req.query.authToken;
+        req.session_state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
       }
 
       var amount = "" + Math.floor(Math.random() * 2500) + 1;
       var data = {
         'title': 'Proceed to payment',
         'amount': amount,
-        'formattedAmount': ("" + (amount / 100)).currency(),
+        'formatted_amount': ("" + (amount / 100)).currency(),
         'proceed_to_payment_path': PAYMENT_PATH,
-        'token_id': uniqueSessionRef
+        'payment_reference': paymentReference
       };
       res.render('paystart', data);
     });
 
     app.post(PAYMENT_PATH, function (req, res) {
       logger.info('POST ' + PAYMENT_PATH);
-      var chargeIdReference = req.body.tokenId.split('_').pop();
-      var successPage = process.env.DEMO_SERVER_URL + SUCCESS_PATH + chargeIdReference;
+      var paymentReference = req.body.paymentReference;
+      var successPage = process.env.DEMO_SERVER_URL + SUCCESS_PATH + paymentReference;
 
       var paymentData = {
         headers: {
@@ -54,8 +54,8 @@ module.exports = {
         }
       };
 
-      if (req.session_state[req.body.tokenId]) {
-        paymentData.headers.Authorization = "Bearer " + req.session_state[req.body.tokenId];
+      if (req.session_state[AUTH_TOKEN_PREFIX + paymentReference]) {
+        paymentData.headers.Authorization = "Bearer " + req.session_state[AUTH_TOKEN_PREFIX + paymentReference];
       }
 
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
@@ -64,7 +64,7 @@ module.exports = {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
           var chargeId = extractChargeId(frontendCardDetailsUrl.href);
 
-          req.session_state[CHARGE_ID_PREFIX + chargeIdReference] = chargeId;
+          req.session_state[CHARGE_ID_PREFIX + paymentReference] = chargeId;
           logger.info('Redirecting user to: ' + frontendCardDetailsUrl.href);
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
@@ -77,14 +77,14 @@ module.exports = {
       });
     });
 
-    app.get(SUCCESS_PATH + ':chargeIdReference', function (req, res) {
-      var chargeIdReference = req.params.chargeIdReference;
-      var paymentId = req.session_state[CHARGE_ID_PREFIX + chargeIdReference];
+    app.get(SUCCESS_PATH + ':paymentReference', function (req, res) {
+      var paymentReference = req.params.paymentReference;
+      var chargeId = req.session_state[CHARGE_ID_PREFIX + paymentReference];
 
-      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + paymentId;
+      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + chargeId;
       var args = {
         headers: {'Accept': 'application/json',
-                  'Authorization': 'Bearer ' + req.session_state[AUTH_TOKEN_PREFIX + chargeIdReference] }
+                  'Authorization': 'Bearer ' + req.session_state[AUTH_TOKEN_PREFIX + paymentReference] }
       };
 
       client.get(publicApiUrl, args, function (data, publicApiResponse) {
@@ -92,7 +92,7 @@ module.exports = {
           var responseData = {
             'title': 'Payment confirmation',
             'confirmationMessage': 'Your payment has been successful',
-            'paymentReference': chargeIdReference + '-' + paymentId,
+            'paymentReference': paymentReference + '-' + chargeId,
             'paymentDescription': 'Demo Transaction',
             'formattedAmount': ("" + (data.amount / 100)).currency(),
           };
@@ -101,7 +101,7 @@ module.exports = {
         }
         response(req, res, 'error', {
           'message': 'Sorry, your payment has failed. Please contact us with following reference number.',
-          'paymentReference': chargeIdReference + '-' + paymentId
+          'paymentReference': paymentReference + '-' + chargeId
         });
       });
     });

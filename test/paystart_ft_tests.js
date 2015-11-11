@@ -4,12 +4,11 @@ var app = require(__dirname + '/../server.js').getApp;
 var request = require('supertest');
 var nock = require('nock');
 var portfinder = require('portfinder');
-var TOKEN_PREFIX = 't_';
 
 portfinder.getPort(function (err, publicApiPort) {
     var publicApiMockUrl = 'http://localhost:' + publicApiPort;
     var chargeId = '23144323';
-    var chargeIdReference = '54321';
+    var paymentReference = '54321';
     var frontendCardDetailsPath = '/charge/' + chargeId;
     var publicApiPaymentsUrl = '/v1/payments/';
     var publicApiMock = nock(publicApiMockUrl);
@@ -35,7 +34,7 @@ portfinder.getPort(function (err, publicApiPort) {
             whenPublicApiReceivesPost({
                 'amount': 4000,
                 'account_id': '11111',
-                'return_url': localServerUrl + '/success/' + chargeIdReference
+                'return_url': localServerUrl + '/success/' + paymentReference
             }).reply( 400, {
                 'message': 'Unknown gateway account: 11111'
             }, {
@@ -45,7 +44,7 @@ portfinder.getPort(function (err, publicApiPort) {
             postProceedResponseWith( {
                     'amount': '4000',
                     'accountId': '11111',
-                    'tokenId':TOKEN_PREFIX + chargeIdReference
+                    'paymentReference': paymentReference
             }).expect(400, {
                 'message': 'Example service failed to create charge'
             }, {
@@ -65,7 +64,7 @@ portfinder.getPort(function (err, publicApiPort) {
             whenPublicApiReceivesPost( {
                 'amount': 5000,
                 'account_id': '12345',
-                'return_url': localServerUrl + '/success/' + chargeIdReference
+                'return_url': localServerUrl + '/success/' + paymentReference
             }).reply( 201, {
                     'links': [ {
                         'href': frontendCardDetailsPath,
@@ -80,7 +79,7 @@ portfinder.getPort(function (err, publicApiPort) {
             postProceedResponseWith( {
                 'amount': '5000',
                 'accountId': '12345',
-                'tokenId':TOKEN_PREFIX + chargeIdReference
+                'paymentReference': paymentReference
             }).expect('Location', frontendCardDetailsPath)
               .expect(303)
               .end(done);
