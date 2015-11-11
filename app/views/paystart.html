@@ -14,12 +14,12 @@
                         <h2>Payment summary</h2>
                         <p><strong id="service-name">{{payment.serviceNameCapitalised}}</strong></p>
                         <p>
-                            Amount to pay: <span class="amount">{{formattedAmount}}</span>
+                            Amount to pay: <span class="amount">{{formatted_amount}}</span>
                         </p>
                         <form class="form" action="{{ proceed_to_payment_path }}" method="post">
                             <input type='hidden' name='amount' value="{{ amount }}" />
                             <input type='hidden' name='accountId' value="{{ account_id }}" />
-                            <input type='hidden' name='tokenId' value="{{ token_id }}" />
+                            <input type='hidden' name='paymentReference' value="{{ payment_reference }}" />
                             <div class="form-group">
                                 <input type="submit" id="submitStartPayment" name="submitStartPayment" value="Proceed to payment" class="button"/><br />
                             </div>
