@@ -10,7 +10,8 @@ describe('The payment success view', function() {
     'title': 'Payment confirmation',
     'confirmationMessage': 'Your payment has been successful',
     'paymentReference': 100 + '-' + 2,
-    'formattedAmount': expectedAmountFormat
+    'formattedAmount': expectedAmountFormat,
+    'paymentDescription': 'some description'
   };
 
   function renderSuccessPage(templateData, checkFunction) {
@@ -20,23 +21,12 @@ describe('The payment success view', function() {
     });
   }
 
-  it('should render the amount', function(done) {
+  it('should render the page correctly', function(done) {
     renderSuccessPage(templateData, function($) {
-      $('.amount').text().should.equal(expectedAmountFormat);
-      done();
-    });
-  });
-
-  it('should render the payment reference', function(done) {
-    renderSuccessPage(templateData, function($) {
+      $('#amount').text().should.equal(expectedAmountFormat);
       $('#payment-reference').text().should.equal('100-2');
-      done();
-    });
-  });
-
-  it('should render the a title', function(done) {
-    renderSuccessPage(templateData, function($) {
-      $('.form-title').text().should.equal('Your payment has been successful');
+      $('#confirmation-message').text().should.equal('Your payment has been successful');
+      $('#payment-description').text().should.equal('some description');
       done();
     });
   });

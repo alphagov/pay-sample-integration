@@ -8,7 +8,7 @@
   <div class="grid-row">
     <div class="column-full">
       <div class="content-wrapper">
-          <h2 id="confirmationMessage" class="form-title" style="font-size: 30px">{{confirmationMessage}}</h2>
+          <h2 id="confirmation-message" class="form-title" style="font-size: 30px">{{confirmationMessage}}</h2>
           <p><strong>Reference number</strong></p>
           <p><strong id="payment-reference">{{paymentReference}}</strong></p>
              <div class="payment-summary" style="position: relative">
@@ -20,7 +20,7 @@
                      <h2>Payment summary</h2>
 
                       <p> Payment of: <strong id="payment-description">{{paymentDescription}}</strong></p>
-                      <p> Amount paid: <span class="amount">{{formattedAmount}}</span></p>
+                      <p> Amount paid: <span id="amount">{{formattedAmount}}</span></p>
                      <div class="form-group">
                          <input type="submit" id="returnToGovUk" name="returnToGovUk" value="Return to GOV.UK homepage" class="button"/><br />
                      </div>

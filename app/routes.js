@@ -5,7 +5,7 @@ var response = require(__dirname + '/utils/response.js').response;
 
 var Client = require('node-rest-client').Client;
 var client = new Client();
-var TOKENID_PREFIX = "t_";
+var AUTH_TOKEN_PREFIX = "t_";
 var CHARGE_ID_PREFIX = "c_";
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
     app.get('/', function (req, res) {
       logger.info('GET /');
 
-      var uniqueSessionRef = TOKENID_PREFIX + randomIntNotInSession(req);
+      var uniqueSessionRef = AUTH_TOKEN_PREFIX + randomIntNotInSession(req);
       if (req.query.authToken) {
         req.session_state[uniqueSessionRef] = req.query.authToken;
       }
@@ -84,7 +84,7 @@ module.exports = {
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + paymentId;
       var args = {
         headers: {'Accept': 'application/json',
-                  'Authorization': 'Bearer ' + req.session_state[TOKENID_PREFIX + chargeIdReference] }
+                  'Authorization': 'Bearer ' + req.session_state[AUTH_TOKEN_PREFIX + chargeIdReference] }
       };
 
       client.get(publicApiUrl, args, function (data, publicApiResponse) {
@@ -116,7 +116,7 @@ module.exports = {
       var theInt = -1;
       while (theInt < 0) {
         theInt = Math.floor(Math.random() * (1000 - 1) + 1);
-        if (req.session_state[TOKENID_PREFIX + theInt]) {
+        if (req.session_state[AUTH_TOKEN_PREFIX + theInt]) {
           theInt = -1;
         }
       }
