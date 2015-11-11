@@ -33,7 +33,6 @@ portfinder.getPort(function (err, publicApiPort) {
 
             whenPublicApiReceivesPost({
                 'amount': 4000,
-                'account_id': '11111',
                 'return_url': localServerUrl + '/success/' + paymentReference
             }).reply( 400, {
                 'message': 'Unknown gateway account: 11111'
@@ -43,10 +42,9 @@ portfinder.getPort(function (err, publicApiPort) {
 
             postProceedResponseWith( {
                     'amount': '4000',
-                    'accountId': '11111',
                     'paymentReference': paymentReference
             }).expect(400, {
-                'message': 'Example service failed to create charge'
+                'message': 'Demo service failed to create charge'
             }, {
                 'Content-Type': 'application/json'
             }).end(done);
@@ -63,7 +61,6 @@ portfinder.getPort(function (err, publicApiPort) {
 
             whenPublicApiReceivesPost( {
                 'amount': 5000,
-                'account_id': '12345',
                 'return_url': localServerUrl + '/success/' + paymentReference
             }).reply( 201, {
                     'links': [ {
@@ -78,7 +75,6 @@ portfinder.getPort(function (err, publicApiPort) {
 
             postProceedResponseWith( {
                 'amount': '5000',
-                'accountId': '12345',
                 'paymentReference': paymentReference
             }).expect('Location', frontendCardDetailsPath)
               .expect(303)
