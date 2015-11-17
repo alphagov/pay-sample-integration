@@ -27,12 +27,14 @@ portfinder.getPort(function (err, publicApiPort) {
     describe('Proceed to payment failures', function () {
         it('should error if gateway account is invalid', function (done) {
             var localServerUrl = 'http://this.server.url:3000';
+            var description = 'payment description for failure';
 
             process.env.PUBLICAPI_URL = publicApiMockUrl;
             process.env.DEMO_SERVER_URL = localServerUrl;
 
             whenPublicApiReceivesPost({
                 'amount': 4000,
+                'description': description,
                 'return_url': localServerUrl + '/success/' + paymentReference
             }).reply( 400, {
                 'message': 'Unknown gateway account: 11111'
@@ -42,6 +44,7 @@ portfinder.getPort(function (err, publicApiPort) {
 
             postProceedResponseWith( {
                     'amount': '4000',
+                    'description': description,
                     'paymentReference': paymentReference
             }).expect(400, {
                 'message': 'Demo service failed to create charge'
@@ -55,12 +58,14 @@ portfinder.getPort(function (err, publicApiPort) {
     describe('Proceed payment scenario', function () {
         it('should respond with redirect URL for payment card capture view', function (done) {
             var localServerUrl = 'http://this.server.url:3000';
+            var description = 'payment description for success';
 
             process.env.PUBLICAPI_URL = publicApiMockUrl;
             process.env.DEMO_SERVER_URL = localServerUrl;
 
             whenPublicApiReceivesPost( {
                 'amount': 5000,
+                'description': description,
                 'return_url': localServerUrl + '/success/' + paymentReference
             }).reply( 201, {
                     'links': [ {
@@ -74,6 +79,7 @@ portfinder.getPort(function (err, publicApiPort) {
                 );
 
             postProceedResponseWith( {
+                'description': description,
                 'amount': '5000',
                 'paymentReference': paymentReference
             }).expect('Location', frontendCardDetailsPath)

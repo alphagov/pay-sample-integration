@@ -27,11 +27,8 @@ module.exports = {
         req.session_state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
       }
 
-      var amount = "" + Math.floor(Math.random() * 2500) + 1;
       var data = {
         'title': 'Proceed to payment',
-        'amount': amount,
-        'formatted_amount': ("" + (amount / 100)).currency(),
         'proceed_to_payment_path': PAYMENT_PATH,
         'payment_reference': paymentReference
       };
@@ -49,6 +46,7 @@ module.exports = {
         },
         data: {
           'amount': parseInt(req.body.amount),
+          'description': req.body.description,
           'return_url': successPage
         }
       };
