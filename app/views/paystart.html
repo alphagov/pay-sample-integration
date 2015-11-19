@@ -5,27 +5,28 @@
 {{$content}}
 
 <main id="content" role="main">
-  <div class="grid-row">
-    <div class="column-full">
-      <div class="content-wrapper">
-					<h1 class="form-title">{{title}}</h1>
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="content-wrapper">
+                <h1 class="form-title">{{title}}</h1>
                 <div class="payment-summary">
                     <div class="inner">
-                        <h2>Payment summary</h2>
+                        <h2>Authorization details</h2>
                         <p><strong id="service-name">{{payment.serviceNameCapitalised}}</strong></p>
-                        <form class="form" action="{{ proceed_to_payment_path }}" method="post">
-                            <p>Payment description: <input type='text' name='description' /></p>
-                            <p>Amount: <input type='text' name='amount' /></p>
-                            <input type='hidden' name='paymentReference' value="{{ payment_reference }}" />
+                        <form class="form" action="{{ proceed_to_confirmation_path }}" method="get">
+                            {{#invalidAuthTokenMsg}}
+                                <div id="errorMsg">{{invalidAuthTokenMsg}}</div>
+                            {{/invalidAuthTokenMsg}}
+                            <p>Enter Authorization Token: <input type='text' name='authToken' /></p>
                             <div class="form-group">
                                 <input type="submit" id="submitStartPayment" name="submitStartPayment" value="Proceed to payment" class="button"/><br />
                             </div>
                         </form>
                     </div>
                 </div>
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </main>
 
 {{/content}}

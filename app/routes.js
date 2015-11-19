@@ -10,6 +10,7 @@ var CHARGE_ID_PREFIX = "c_";
 
 module.exports = {
   bind: function (app) {
+    var PAYMENT_CONFIRMATION_PATH = "/payment-confirmation/";
     var PAYMENT_PATH = "/proceed-to-payment";
     var SUCCESS_PATH = "/success/";
     var PUBLIC_API_PAYMENTS_PATH = '/v1/payments/';
@@ -22,17 +23,36 @@ module.exports = {
     app.get('/', function (req, res) {
       logger.info('GET /');
 
-      var paymentReference = randomIntNotInSession(req);
+      var data = {
+        'title': 'Start a new payment',
+        'proceed_to_confirmation_path': PAYMENT_CONFIRMATION_PATH
+      };
+
+      if (req.query.invalidAuthToken) {
+        data.invalidAuthTokenMsg = 'Please enter an Authorization Token';
+      }
+
+      res.render('paystart', data);
+    });
+
+    app.get(PAYMENT_CONFIRMATION_PATH, function (req, res) {
+      logger.info('GET ' + PAYMENT_CONFIRMATION_PATH);
+
       if (req.query.authToken) {
         req.session_state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
+      } else {
+        res.redirect(303, '/?invalidAuthToken=true');
+        return;
       }
+
+      var paymentReference = randomIntNotInSession(req);
 
       var data = {
         'title': 'Proceed to payment',
         'proceed_to_payment_path': PAYMENT_PATH,
         'payment_reference': paymentReference
       };
-      res.render('paystart', data);
+      res.render('payment_confirmation', data);
     });
 
     app.post(PAYMENT_PATH, function (req, res) {
