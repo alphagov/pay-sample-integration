@@ -11,15 +11,29 @@ var INVALID_AUTH_TOKEN_MSG = "Please enter an Authorization Token";
 
 portfinder.getPort(function (err, publicApiPort) {
 
-    function proceedToPaymentConfirmationWith(data) {
+    function getPaymentConfirmationWith(data) {
         return request(app).get(PAYMENT_CONFIRMATION_PATH + data);
+    }
+
+    function postToPaymentConfirmationWith(data) {
+        return request(app).post(PAYMENT_CONFIRMATION_PATH)
+                            .set('Accept', 'application/json')
+                            .set('Content-Type', 'application/x-www-form-urlencoded')
+                            .send(data);
     }
 
     describe('Start a new payment without entering an auth token', function () {
         it('should redirect user back if authToken is missing on payment confirmation page', function (done) {
-            proceedToPaymentConfirmationWith('')
+            postToPaymentConfirmationWith({})
             .expect(303)
-            .expect('Content-Type', 'text/plain; charset=utf-8')
+            .expect('Location', '/?invalidAuthToken=true')
+            .end(done);
+        });
+
+        it('should redirect user back to Demo Service starting page if authToken is missing', function (done) {
+            getPaymentConfirmationWith('')
+            .expect(303)
+            .expect('Location', '/?invalidAuthToken=true')
             .end(done);
         });
 
@@ -38,8 +52,15 @@ portfinder.getPort(function (err, publicApiPort) {
     });
 
    describe('Start a new payment with an auth token', function () {
-        it('should display payment confirmation page if authToken is not missing', function (done) {
-            proceedToPaymentConfirmationWith('?authToken=12312-312312-31231-1asd23')
+        it('should redirect user to GET /payment-confirmation page if authToken is not missing', function (done) {
+            postToPaymentConfirmationWith({'authToken': '12312-312312-31231-1asd23'})
+            .expect(303)
+            .expect('Location', '/payment-confirmation/?authToken=12312-312312-31231-1asd23')
+            .end(done);
+        });
+
+        it('should display payment-confirmation page if authToken is not missing', function (done) {
+            getPaymentConfirmationWith("?authToken=12312-312312-31231-1asd23")
             .expect(200)
             .expect('Content-Type', 'text/html; charset=utf-8')
             .end(done);

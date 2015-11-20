@@ -55,6 +55,17 @@ module.exports = {
       res.render('payment_confirmation', data);
     });
 
+    app.post(PAYMENT_CONFIRMATION_PATH, function (req, res) {
+      logger.info('POST ' + PAYMENT_CONFIRMATION_PATH);
+
+      if (req.body.authToken) {
+        res.redirect(303, PAYMENT_CONFIRMATION_PATH + '?authToken=' + req.body.authToken);
+      } else {
+        res.redirect(303, '/?invalidAuthToken=true');
+      }
+      return;
+    });
+
     app.post(PAYMENT_PATH, function (req, res) {
       logger.info('POST ' + PAYMENT_PATH);
       var paymentReference = req.body.paymentReference;
