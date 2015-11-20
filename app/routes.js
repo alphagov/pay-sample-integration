@@ -38,14 +38,14 @@ module.exports = {
     app.get(PAYMENT_CONFIRMATION_PATH, function (req, res) {
       logger.info('GET ' + PAYMENT_CONFIRMATION_PATH);
 
+      var paymentReference = randomIntNotInSession(req);
+
       if (req.query.authToken) {
         req.session_state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
       } else {
         res.redirect(303, '/?invalidAuthToken=true');
         return;
       }
-
-      var paymentReference = randomIntNotInSession(req);
 
       var data = {
         'title': 'Proceed to payment',
