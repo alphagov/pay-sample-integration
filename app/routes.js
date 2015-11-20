@@ -76,6 +76,7 @@ module.exports = {
       }
 
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
+      var errorMessage = 'Demo service failed to create charge';
       client.post(publicApiUrl, paymentData, function (data, publicApiResponse) {
 
         logger.info('Publicapi response: ' + data);
@@ -91,13 +92,18 @@ module.exports = {
         }
 
         res.statusCode = 400;
+        if (publicApiResponse.statusCode == 401) {
+            errorMessage = 'Credentials are required to access this resource';
+            res.statusCode = 401;
+        }
+
         response(req, res, 'error', {
-          'message': 'Demo service failed to create charge'
+          'message': errorMessage
         });
       }).on('error', function (err) {
         logger.error('Exception raised calling publicapi: ' + err);
         response(req, res, 'error', {
-            'message': 'Demo service failed to create charge'
+            'message': errorMessage
         });
       });
     });

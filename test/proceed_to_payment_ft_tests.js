@@ -53,6 +53,34 @@ portfinder.getPort(function (err, publicApiPort) {
             }).end(done);
         });
 
+        it('should error if authorization token is invalid', function (done) {
+            var localServerUrl = 'http://this.server.url:3000';
+            var description = 'payment description for failure';
+
+            process.env.PUBLICAPI_URL = publicApiMockUrl;
+            process.env.DEMO_SERVER_URL = localServerUrl;
+
+            whenPublicApiReceivesPost({
+                'amount': 4000,
+                'description': description,
+                'return_url': localServerUrl + '/success/' + paymentReference
+            }).reply( 401, {
+                'message': 'Credentials are required to access this resource.'
+            }, {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 12345-67890-12345-67890'
+            });
+
+            postProceedResponseWith( {
+                    'amount': '4000',
+                    'description': description,
+                    'paymentReference': paymentReference
+            }).expect(401, {
+                'message': 'Credentials are required to access this resource'
+            }, {
+                'Content-Type': 'application/json'
+            }).end(done);
+        });
     });
 
     describe('Proceed payment scenario', function () {
@@ -74,7 +102,8 @@ portfinder.getPort(function (err, publicApiPort) {
                         'method': 'GET'
                         } ]
                     }, {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer 67890-12345-67890-12345'
                     }
                 );
 
