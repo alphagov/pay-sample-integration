@@ -13,7 +13,7 @@
                     <div class="inner">
                         <h2>Authorization details</h2>
                         <p><strong id="service-name">{{payment.serviceNameCapitalised}}</strong></p>
-                        <form class="form" action="{{ proceed_to_confirmation_path }}" method="post">
+                        <form class="form" action="{{ service_path }}" method="post">
                             {{#invalidAuthTokenMsg}}
                                 <div id="errorMsg">{{invalidAuthTokenMsg}}</div>
                             {{/invalidAuthTokenMsg}}

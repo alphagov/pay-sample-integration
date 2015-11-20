@@ -6,17 +6,17 @@ var portfinder = require('portfinder');
 var request = require('supertest');
 var cheerio = require('cheerio');
 
-var PAYMENT_CONFIRMATION_PATH = "/payment-confirmation/";
+var SERVICE_PATH = "/service/";
 var INVALID_AUTH_TOKEN_MSG = "Please enter an Authorization Token";
 
 portfinder.getPort(function (err, publicApiPort) {
 
     function getPaymentConfirmationWith(data) {
-        return request(app).get(PAYMENT_CONFIRMATION_PATH + data);
+        return request(app).get(SERVICE_PATH + data);
     }
 
     function postToPaymentConfirmationWith(data) {
-        return request(app).post(PAYMENT_CONFIRMATION_PATH)
+        return request(app).post(SERVICE_PATH)
                             .set('Accept', 'application/json')
                             .set('Content-Type', 'application/x-www-form-urlencoded')
                             .send(data);
@@ -39,7 +39,7 @@ portfinder.getPort(function (err, publicApiPort) {
 
         var templateData = {
             'title': 'Start a new payment',
-            'proceed_to_confirmation_path': PAYMENT_CONFIRMATION_PATH,
+            'service_path': SERVICE_PATH,
             'invalidAuthTokenMsg': INVALID_AUTH_TOKEN_MSG
         };
         it('should display an error message', function(done){
@@ -52,14 +52,14 @@ portfinder.getPort(function (err, publicApiPort) {
     });
 
    describe('Start a new payment with an auth token', function () {
-        it('should redirect user to GET /payment-confirmation page if authToken is not missing', function (done) {
+        it('should redirect user to GET /service page if authToken is not missing', function (done) {
             postToPaymentConfirmationWith({'authToken': '12312-312312-31231-1asd23'})
             .expect(303)
-            .expect('Location', '/payment-confirmation/?authToken=12312-312312-31231-1asd23')
+            .expect('Location', '/service/?authToken=12312-312312-31231-1asd23')
             .end(done);
         });
 
-        it('should display payment-confirmation page if authToken is not missing', function (done) {
+        it('should display service page if authToken is not missing', function (done) {
             getPaymentConfirmationWith("?authToken=12312-312312-31231-1asd23")
             .expect(200)
             .expect('Content-Type', 'text/html; charset=utf-8')
@@ -68,7 +68,7 @@ portfinder.getPort(function (err, publicApiPort) {
 
         var templateData = {
             'title': 'Start a new payment',
-            'proceed_to_confirmation_path': PAYMENT_CONFIRMATION_PATH
+            'service_path': SERVICE_PATH
         };
         it('should not display an error message ', function(done){
             renderer('paystart', templateData, function(htmlOutput) {
