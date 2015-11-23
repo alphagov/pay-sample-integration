@@ -6,4 +6,4 @@ Skeleton repo for example consuming service for payments (enabling strategy).
 | Name | Description |
 | ---- | ----------- |
 | PUBLICAPI_URL | URL of the pay-publicapi server. |
-| DEMO_SERVER_URL | publicly reachable URL of this demo-server. Used to create the payment success page URL. |
+| DEMO_SERVICE_URL | publicly reachable URL of this demo-server. Used to create the payment success page URL. |
