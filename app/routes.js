@@ -69,7 +69,7 @@ module.exports = {
     app.post(PAYMENT_PATH, function (req, res) {
       logger.info('POST ' + PAYMENT_PATH);
       var paymentReference = req.body.paymentReference;
-      var successPage = process.env.DEMOSERVICE_URL + SUCCESS_PATH + paymentReference;
+      var successPage = process.env.DEMOSERVICE_PAYSTART_URL + SUCCESS_PATH + paymentReference;
 
       var paymentData = {
         headers: {

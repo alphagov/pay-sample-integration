@@ -30,7 +30,7 @@ portfinder.getPort(function (err, publicApiPort) {
             var description = 'payment description for failure';
 
             process.env.PUBLICAPI_URL = publicApiMockUrl;
-            process.env.DEMOSERVICE_URL = localServerUrl;
+            process.env.DEMOSERVICE_PAYSTART_URL = localServerUrl;
 
             whenPublicApiReceivesPost({
                 'amount': 4000,
@@ -58,7 +58,7 @@ portfinder.getPort(function (err, publicApiPort) {
             var description = 'payment description for failure';
 
             process.env.PUBLICAPI_URL = publicApiMockUrl;
-            process.env.DEMOSERVICE_URL = localServerUrl;
+            process.env.DEMOSERVICE_PAYSTART_URL = localServerUrl;
 
             whenPublicApiReceivesPost({
                 'amount': 4000,
@@ -89,7 +89,7 @@ portfinder.getPort(function (err, publicApiPort) {
             var description = 'payment description for success';
 
             process.env.PUBLICAPI_URL = publicApiMockUrl;
-            process.env.DEMOSERVICE_URL = localServerUrl;
+            process.env.DEMOSERVICE_PAYSTART_URL = localServerUrl;
 
             whenPublicApiReceivesPost( {
                 'amount': 5000,
