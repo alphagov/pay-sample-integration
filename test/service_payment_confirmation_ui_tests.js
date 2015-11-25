@@ -43,7 +43,7 @@ describe('The payment error view', function(){
   it('should display an error message ', function(done){
     renderer('error', templateData, function(htmlOutput) {
       var $ = cheerio.load(htmlOutput);
-      $('#errorMsg').text().should.equal('Sorry, your payment has failed. Please contact us with following reference number.');
+      $('#error-msg').text().should.equal('Sorry, your payment has failed. Please contact us with following reference number.');
       $('#payment-reference').text().should.equal('100-2');
       done();
     });

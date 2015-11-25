@@ -14,13 +14,18 @@
                         <h2>Authorization details</h2>
                         <p><strong id="service-name">{{payment.serviceNameCapitalised}}</strong></p>
                         <form class="form" action="{{ service_path }}" method="post">
-                            {{#invalidAuthTokenMsg}}
-                                <div id="errorMsg">{{invalidAuthTokenMsg}}</div>
-                            {{/invalidAuthTokenMsg}}
-                            <p>Enter Authorization Token: <input type='text' name='authToken' /></p>
-                            <div class="form-group">
-                                <input type="submit" id="proceedToService" name="proceedToService" value="Proceed to service" class="button"/><br />
-                            </div>
+                            <fieldset>
+                                {{#invalidAuthTokenMsg}}
+                                    <div id="error-msg">{{invalidAuthTokenMsg}}</div>
+                                {{/invalidAuthTokenMsg}}
+                                <div class="form-group">
+                                    <label for="auth-token" class="form-label-bold">Enter Authorization Token:</label>
+                                    <input type="text" id="auth-token" name="authToken" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" id="proceed-to-service" name="proceed-to-service" value="Proceed to service" class="button"/><br />
+                                </div>
+                            </fieldset>
                         </form>
                     </div>
                 </div>

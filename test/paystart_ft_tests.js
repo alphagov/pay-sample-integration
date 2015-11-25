@@ -45,7 +45,7 @@ portfinder.getPort(function (err, publicApiPort) {
         it('should display an error message', function(done){
             renderer('paystart', templateData, function(htmlOutput) {
               var $ = cheerio.load(htmlOutput);
-              $('#errorMsg').text().should.equal(INVALID_AUTH_TOKEN_MSG);
+              $('#error-msg').text().should.equal(INVALID_AUTH_TOKEN_MSG);
               done();
             });
         });
@@ -73,7 +73,7 @@ portfinder.getPort(function (err, publicApiPort) {
         it('should not display an error message ', function(done){
             renderer('paystart', templateData, function(htmlOutput) {
               var $ = cheerio.load(htmlOutput);
-              $('#errorMsg').text().should.equal('');
+              $('#error-msg').text().should.equal('');
               done();
             });
         });
