@@ -5,6 +5,14 @@ var request = require('supertest');
 var nock = require('nock');
 var portfinder = require('portfinder');
 
+// session mocking
+var AUTH_TOKEN_PREFIX = "t_";
+var clientSessions = require("client-sessions");
+var sessionConfig = {
+  'cookieName': 'session_state',
+  'secret':     process.env.SESSION_ENCRYPTION_KEY
+};
+
 portfinder.getPort(function (err, publicApiPort) {
     var publicApiMockUrl = 'http://localhost:' + publicApiPort;
     var chargeId = '23144323';
@@ -13,14 +21,20 @@ portfinder.getPort(function (err, publicApiPort) {
     var publicApiPaymentsUrl = '/v1/payments/';
     var publicApiMock = nock(publicApiMockUrl);
 
-    function whenPublicApiReceivesPost(data) {
+    function whenPublicApiReceivesPost(data, token) {
         return publicApiMock.matchHeader('Content-Type', 'application/json')
+                            .matchHeader('Authorization', 'Bearer ' + token)
                             .post(publicApiPaymentsUrl, data);
     }
 
-    function postProceedResponseWith(data) {
+    function postProceedResponseWith(data, token) {
+        var sessionData = {};
+        sessionData[AUTH_TOKEN_PREFIX + data.paymentReference] = token;
+        var encryptedSession = clientSessions.util.encode(sessionConfig, sessionData);
+
         return request(app).post('/proceed-to-payment')
                            .set('Accept', 'application/json')
+                           .set('Cookie','session_state=' + encryptedSession)
                            .send(data);
     }
 
@@ -36,20 +50,16 @@ portfinder.getPort(function (err, publicApiPort) {
                 'amount': 4000,
                 'description': description,
                 'return_url': localServerUrl + '/success/' + paymentReference
-            }).reply( 400, {
+            }, '12345-67890-12345-67890').reply( 400, {
                 'message': 'Unknown gateway account: 11111'
-            }, {
-                'Content-Type': 'application/json'
             });
 
             postProceedResponseWith( {
                     'amount': '4000',
                     'description': description,
                     'paymentReference': paymentReference
-            }).expect(400, {
+            }, '12345-67890-12345-67890').expect(400, {
                 'message': 'Demo service failed to create charge'
-            }, {
-                'Content-Type': 'application/json'
             }).end(done);
         });
 
@@ -64,21 +74,16 @@ portfinder.getPort(function (err, publicApiPort) {
                 'amount': 4000,
                 'description': description,
                 'return_url': localServerUrl + '/success/' + paymentReference
-            }).reply( 401, {
+            }, '12345-67890-12345-67890').reply(401, {
                 'message': 'Credentials are required to access this resource.'
-            }, {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer 12345-67890-12345-67890'
             });
 
             postProceedResponseWith( {
                     'amount': '4000',
                     'description': description,
                     'paymentReference': paymentReference
-            }).expect(401, {
+            }, '12345-67890-12345-67890').expect(401, {
                 'message': 'Credentials are required to access this resource'
-            }, {
-                'Content-Type': 'application/json'
             }).end(done);
         });
     });
@@ -95,23 +100,19 @@ portfinder.getPort(function (err, publicApiPort) {
                 'amount': 5000,
                 'description': description,
                 'return_url': localServerUrl + '/success/' + paymentReference
-            }).reply( 201, {
+            },'12345-67890-12345-67890').reply( 201, {
                     'links': [ {
                         'href': frontendCardDetailsPath,
                         'rel': 'next_url',
                         'method': 'GET'
                         } ]
-                    }, {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer 67890-12345-67890-12345'
-                    }
-                );
+                    });
 
             postProceedResponseWith( {
                 'description': description,
                 'amount': '5000',
                 'paymentReference': paymentReference
-            }).expect('Location', frontendCardDetailsPath)
+            },'12345-67890-12345-67890').expect('Location', frontendCardDetailsPath)
               .expect(303)
               .end(done);
         });
