@@ -98,7 +98,7 @@ module.exports = {
             'title': 'Payment confirmation',
             'confirmationMessage': 'Your payment has been successful',
             'paymentReference': paymentReference + '-' + chargeId,
-            'paymentDescription': 'Demo Transaction',
+            'paymentDescription': data.description,
             'formattedAmount': ("" + (data.amount / 100)).currency(),
           };
           response(req, res, 'success', responseData);
