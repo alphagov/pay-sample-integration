@@ -38,7 +38,6 @@ portfinder.getPort(function (err, publicApiPort) {
         });
 
         var templateData = {
-            'title': 'Start a new payment',
             'service_path': SERVICE_PATH,
             'invalidAuthTokenMsg': INVALID_AUTH_TOKEN_MSG
         };
@@ -67,7 +66,6 @@ portfinder.getPort(function (err, publicApiPort) {
         });
 
         var templateData = {
-            'title': 'Start a new payment',
             'service_path': SERVICE_PATH
         };
         it('should not display an error message ', function(done){

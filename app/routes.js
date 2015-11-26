@@ -24,7 +24,6 @@ module.exports = {
       logger.info('GET /');
 
       var data = {
-        'title': 'Start a new payment',
         'service_path': SERVICE_PATH
       };
 
@@ -48,7 +47,6 @@ module.exports = {
       }
 
       var data = {
-        'title': 'Proceed to payment',
         'proceed_to_payment_path': PAYMENT_PATH,
         'payment_reference': paymentReference
       };
