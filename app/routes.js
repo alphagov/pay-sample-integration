@@ -10,6 +10,7 @@ var CHARGE_ID_PREFIX = "c_";
 
 module.exports = {
   bind: function (app) {
+    var SERVICE_PATH = "/service/";
     var PAYMENT_PATH = "/proceed-to-payment";
     var SUCCESS_PATH = "/success/";
     var PUBLIC_API_PAYMENTS_PATH = '/v1/payments/';
@@ -22,23 +23,51 @@ module.exports = {
     app.get('/', function (req, res) {
       logger.info('GET /');
 
+      var data = {
+        'service_path': SERVICE_PATH
+      };
+
+      if (req.query.invalidAuthToken) {
+        data.invalidAuthTokenMsg = 'Please enter an Authorization Token';
+      }
+
+      res.render('paystart', data);
+    });
+
+    app.get(SERVICE_PATH, function (req, res) {
+      logger.info('GET ' + SERVICE_PATH);
+
       var paymentReference = randomIntNotInSession(req);
+
       if (req.query.authToken) {
         req.session_state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
+      } else {
+        res.redirect(303, '/?invalidAuthToken=true');
+        return;
       }
 
       var data = {
-        'title': 'Proceed to payment',
         'proceed_to_payment_path': PAYMENT_PATH,
         'payment_reference': paymentReference
       };
-      res.render('paystart', data);
+      res.render('service', data);
+    });
+
+    app.post(SERVICE_PATH, function (req, res) {
+      logger.info('POST ' + SERVICE_PATH);
+
+      if (req.body.authToken) {
+        res.redirect(303, SERVICE_PATH + '?authToken=' + req.body.authToken);
+      } else {
+        res.redirect(303, '/?invalidAuthToken=true');
+      }
+      return;
     });
 
     app.post(PAYMENT_PATH, function (req, res) {
       logger.info('POST ' + PAYMENT_PATH);
       var paymentReference = req.body.paymentReference;
-      var successPage = process.env.DEMO_SERVER_URL + SUCCESS_PATH + paymentReference;
+      var successPage = process.env.DEMOSERVICE_PAYSTART_URL + SUCCESS_PATH + paymentReference;
 
       var paymentData = {
         headers: {
@@ -56,6 +85,7 @@ module.exports = {
       }
 
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
+      var errorMessage = 'Demo service failed to create charge';
       client.post(publicApiUrl, paymentData, function (data, publicApiResponse) {
 
         logger.info('Publicapi response: ' + data);
@@ -71,13 +101,18 @@ module.exports = {
         }
 
         res.statusCode = 400;
+        if (publicApiResponse.statusCode == 401) {
+            errorMessage = 'Credentials are required to access this resource';
+            res.statusCode = 401;
+        }
+
         response(req, res, 'error', {
-          'message': 'Demo service failed to create charge'
+          'message': errorMessage
         });
       }).on('error', function (err) {
         logger.error('Exception raised calling publicapi: ' + err);
         response(req, res, 'error', {
-            'message': 'Demo service failed to create charge'
+            'message': errorMessage
         });
       });
     });

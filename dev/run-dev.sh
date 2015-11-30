@@ -4,6 +4,6 @@ cd $DIR/..
 
 export PORT=9000
 export PUBLICAPI_URL=http://dockerhost:9100
-export DEMO_SERVER_URL=http://dockerhost:9000
+export DEMOSERVICE_PAYSTART_URL=http://demoservice:9000
 
 npm run start
