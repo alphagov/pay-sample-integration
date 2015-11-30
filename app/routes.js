@@ -1,6 +1,5 @@
 require('array.prototype.find');
 var logger = require('winston');
-
 var response = require(__dirname + '/utils/response.js').response;
 
 var Client = require('node-rest-client').Client;
@@ -40,7 +39,7 @@ module.exports = {
       var paymentReference = randomIntNotInSession(req);
 
       if (req.query.authToken) {
-        req.session_state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
+        req.demoservice_state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
       } else {
         res.redirect(303, '/?invalidAuthToken=true');
         return;
@@ -80,8 +79,8 @@ module.exports = {
         }
       };
 
-      if (req.session_state[AUTH_TOKEN_PREFIX + paymentReference]) {
-        paymentData.headers.Authorization = "Bearer " + req.session_state[AUTH_TOKEN_PREFIX + paymentReference];
+      if (req.demoservice_state[AUTH_TOKEN_PREFIX + paymentReference]) {
+        paymentData.headers.Authorization = "Bearer " + req.demoservice_state[AUTH_TOKEN_PREFIX + paymentReference];
       }
 
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
@@ -94,7 +93,7 @@ module.exports = {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
           var chargeId = extractChargeId(frontendCardDetailsUrl.href);
 
-          req.session_state[CHARGE_ID_PREFIX + paymentReference] = chargeId;
+          req.demoservice_state[CHARGE_ID_PREFIX + paymentReference] = chargeId;
           logger.info('Redirecting user to: ' + frontendCardDetailsUrl.href);
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
@@ -119,12 +118,12 @@ module.exports = {
 
     app.get(SUCCESS_PATH + ':paymentReference', function (req, res) {
       var paymentReference = req.params.paymentReference;
-      var chargeId = req.session_state[CHARGE_ID_PREFIX + paymentReference];
+      var chargeId = req.demoservice_state[CHARGE_ID_PREFIX + paymentReference];
 
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + chargeId;
       var args = {
         headers: {'Accept': 'application/json',
-                  'Authorization': 'Bearer ' + req.session_state[AUTH_TOKEN_PREFIX + paymentReference] }
+                  'Authorization': 'Bearer ' + req.demoservice_state[AUTH_TOKEN_PREFIX + paymentReference] }
       };
 
       client.get(publicApiUrl, args, function (data, publicApiResponse) {
@@ -156,7 +155,7 @@ module.exports = {
       var theInt = -1;
       while (theInt < 0) {
         theInt = Math.floor(Math.random() * (1000 - 1) + 1);
-        if (req.session_state[AUTH_TOKEN_PREFIX + theInt]) {
+        if (req.demoservice_state[AUTH_TOKEN_PREFIX + theInt]) {
           theInt = -1;
         }
       }

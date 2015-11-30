@@ -30,7 +30,7 @@ app.use(function (req, res, next) {
 });
 
 app.use(clientSessions({
-  cookieName: 'session_state',
+  cookieName: "demoservice_state",
   secret: "Demo Service Key"
 }));
 

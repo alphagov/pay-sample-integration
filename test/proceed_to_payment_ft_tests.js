@@ -9,7 +9,7 @@ var portfinder = require('portfinder');
 var AUTH_TOKEN_PREFIX = "t_";
 var clientSessions = require("client-sessions");
 var sessionConfig = {
-  'cookieName': 'session_state',
+  'cookieName': 'demoservice_state',
   'secret':     process.env.SESSION_ENCRYPTION_KEY
 };
 
@@ -34,7 +34,7 @@ portfinder.getPort(function (err, publicApiPort) {
 
         return request(app).post('/proceed-to-payment')
                            .set('Accept', 'application/json')
-                           .set('Cookie','session_state=' + encryptedSession)
+                           .set('Cookie','demoservice_state=' + encryptedSession)
                            .send(data);
     }
 

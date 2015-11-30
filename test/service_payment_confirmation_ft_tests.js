@@ -7,7 +7,7 @@ var portfinder = require('portfinder');
 
 var clientSessions = require("client-sessions");
 var sessionConfig = {
-  'cookieName': 'session_state',
+  'cookieName': 'demoservice_state',
   'secret':     process.env.SESSION_ENCRYPTION_KEY
 };
 
@@ -33,7 +33,7 @@ portfinder.getPort(function (err, publicApiPort) {
       var encryptedSession = clientSessions.util.encode(sessionConfig, sessionData);
 
         return request(app).get(successPath)
-          .set('Cookie','session_state=' + encryptedSession)
+          .set('Cookie','demoservice_state=' + encryptedSession)
           .set('Accept', 'application/json');
     }
 
