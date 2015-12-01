@@ -5,6 +5,8 @@ var favicon = require('serve-favicon');
 var Price = require('format-price');
 var routes = require(__dirname + '/app/routes.js');
 var bodyParser = require('body-parser');
+var express_enforces_ssl = require('express-enforces-ssl');
+var helmet = require('helmet');
 var port = (process.env.PORT || 3000);
 var app = express();
 
@@ -17,6 +19,12 @@ app.set('views', __dirname + '/app/views');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+if(process.env.NODE_ENV == 'production') {
+  app.enable('trust proxy');
+  app.use(express_enforces_ssl()); //https 301 redirection
+  app.use(helmet()); //order agent to stick to https
+}
 
 app.use('/public/javascripts', express.static(__dirname + '/public/assets/javascripts'));
 
