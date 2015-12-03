@@ -74,6 +74,7 @@ module.exports = {
         },
         data: {
           'amount': parseInt(req.body.amount),
+          'reference': req.body.reference,
           'description': req.body.description,
           'return_url': successPage
         }
@@ -131,7 +132,7 @@ module.exports = {
           var responseData = {
             'title': 'Payment confirmation',
             'confirmationMessage': 'Your payment has been successful',
-            'paymentReference': paymentReference + '-' + chargeId,
+            'paymentReference': data.reference,
             'paymentDescription': data.description,
             'formattedAmount': ("" + (data.amount / 100)).currency(),
           };

@@ -46,6 +46,7 @@ portfinder.getPort(function (err, publicApiPort) {
                 .reply(200, {
                     'payment_id': chargeId,
                     'amount': amount,
+                    'reference': 'Test reference',
                     'description': 'Test description',
                     'status': 'SUCCEEDED',
                     'return_url': 'http://not.used.in/this/'+ chargeReferenceId,
@@ -63,7 +64,7 @@ portfinder.getPort(function (err, publicApiPort) {
                 .expect(200, {
                     'title': 'Payment confirmation',
                     'confirmationMessage': 'Your payment has been successful',
-                    'paymentReference': chargeReferenceId + '-' + chargeId,
+                    'paymentReference': 'Test reference',
                     'paymentDescription': 'Test description',
                     'formattedAmount': '£34.54'
                 })
