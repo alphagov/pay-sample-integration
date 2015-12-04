@@ -1,11 +1,8 @@
-FROM          node:0.12.7
+FROM node:0.12.7
 
-ADD           . /app
-WORKDIR       /app
+ENV PORT 8080
 
-ENV PORT      9000
-EXPOSE        9000
-
-RUN           npm install --production
-
-CMD 	      npm start
+ADD . /app
+WORKDIR /app
+RUN npm install --production
+CMD npm start
