@@ -27,7 +27,7 @@ module.exports = {
       };
 
       if (req.query.invalidAuthToken) {
-        data.invalidAuthTokenMsg = 'Please enter an Authorization Token';
+        data.invalidAuthTokenMsg = 'Please enter a valid Authorization Token';
       }
 
       res.render('paystart', data);

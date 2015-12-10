@@ -7,7 +7,7 @@ var request = require('supertest');
 var cheerio = require('cheerio');
 
 var SERVICE_PATH = "/service/";
-var INVALID_AUTH_TOKEN_MSG = "Please enter an Authorization Token";
+var INVALID_AUTH_TOKEN_MSG = "Please enter a valid Authorization Token";
 
 portfinder.getPort(function (err, publicApiPort) {
 
@@ -44,7 +44,7 @@ portfinder.getPort(function (err, publicApiPort) {
         it('should display an error message', function(done){
             renderer('paystart', templateData, function(htmlOutput) {
               var $ = cheerio.load(htmlOutput);
-              $('#error-msg').text().should.equal(INVALID_AUTH_TOKEN_MSG);
+              $('#error-msg').text().trim().should.equal(INVALID_AUTH_TOKEN_MSG);
               done();
             });
         });

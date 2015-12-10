@@ -5,30 +5,26 @@
 {{$content}}
 
 <main id="content" role="main">
-  <div class="grid-row">
-    <div class="column-full">
-      <div class="content-wrapper">
-          <h2 id="confirmation-message" class="form-title" style="font-size: 30px">{{confirmationMessage}}</h2>
-          <p><strong>Reference number</strong></p>
-          <p><strong id="payment-reference">{{paymentReference}}</strong></p>
-             <div class="payment-summary" style="position: relative">
-                 <div class="outer">
-                    <h2>What happens next</h2>
-                     <p> We will email you a receipt shortly</p>
-                     <p> If you have not paid the full amount you will contacted by Department for Work and Pensions Debt Management.</p>
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="content-wrapper">
+                <br />
+                <h2 id="confirmation-message" style="font-size: 30px">{{confirmationMessage}}</h2>
+                <div class="outer">
+                    <p> We will email you a receipt shortly</p>
 
-                     <h2>Payment summary</h2>
+                    <h2>Payment summary</h2>
 
-                      <p> Payment of: <strong id="payment-description">{{paymentDescription}}</strong></p>
-                      <p> Amount paid: <span id="amount">{{formattedAmount}}</span></p>
-                     <div class="form-group">
-                         <input type="submit" id="returnToGovUk" name="returnToGovUk" value="Return to GOV.UK homepage" class="button"/><br />
-                     </div>
+                    <p> <strong id="payment-reference">Reference number: {{paymentReference}}</strong></p>
+                    <p> Payment for: {{paymentDescription}} </p>
+                    <p> Amount paid: <span id="amount">{{formattedAmount}}</span></p>
+                    <div class="form-group">
+                        <input type="submit" id="returnToGovUk" name="returnToGovUk" value="Return to GOV.UK homepage" class="button"/><br />
                     </div>
                 </div>
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </main>
 
 {{/content}}
