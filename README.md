@@ -1,9 +1,12 @@
 # pay-demo-service
 Example service integration for GOV.UK Pay customer service.
 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/alphagov/pay-demo-service/tree/PP-376)
+
 ## Running GOV.UK Pay customer service
 
-npm test
+npm install
+npm start
 
 ### Required environment variables:
 

@@ -1,0 +1,7 @@
+{
+  "name": "Demo GOV.UK Pay customer service",
+  "description": "Example service integration for GOV.UK Pay customer service.",
+  "repository": "https://github.com/alphagov/pay-demo-service",
+  "logo": "https://pay-demo-service.herokuapp.com/govuk_modules/govuk_template/assets/images/gov.uk_logotype_crown.png",
+  "keywords": ["node", "express"]
+}
