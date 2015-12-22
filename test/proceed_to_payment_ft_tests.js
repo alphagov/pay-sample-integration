@@ -1,4 +1,4 @@
-process.env.SESSION_ENCRYPTION_KEY = "Demo Service Key";
+process.env.SESSION_ENCRYPTION_KEY = "secret";
 
 var app = require(__dirname + '/../server.js').getApp;
 var request = require('supertest');
@@ -9,7 +9,7 @@ var portfinder = require('portfinder');
 var AUTH_TOKEN_PREFIX = "t_";
 var clientSessions = require("client-sessions");
 var sessionConfig = {
-  'cookieName': 'demoservice_state',
+  'cookieName': 'state',
   'secret':     process.env.SESSION_ENCRYPTION_KEY
 };
 
@@ -34,7 +34,7 @@ portfinder.getPort(function (err, publicApiPort) {
 
         return request(app).post('/proceed-to-payment')
                            .set('Accept', 'application/json')
-                           .set('Cookie','demoservice_state=' + encryptedSession)
+                           .set('Cookie','state=' + encryptedSession)
                            .send(data);
     }
 
@@ -44,7 +44,7 @@ portfinder.getPort(function (err, publicApiPort) {
             var description = 'payment description for failure';
 
             process.env.PUBLICAPI_URL = publicApiMockUrl;
-            process.env.DEMOSERVICE_PAYSTART_URL = localServerUrl;
+            process.env.SERVICE_URL = localServerUrl;
 
             whenPublicApiReceivesPost({
                 'amount': 4000,
@@ -59,7 +59,7 @@ portfinder.getPort(function (err, publicApiPort) {
                     'description': description,
                     'paymentReference': paymentReference
             }, '12345-67890-12345-67890').expect(400, {
-                'message': 'Demo service failed to create charge'
+                'message': 'Sample service failed to create charge'
             }).end(done);
         });
 
@@ -68,7 +68,7 @@ portfinder.getPort(function (err, publicApiPort) {
             var description = 'payment description for failure';
 
             process.env.PUBLICAPI_URL = publicApiMockUrl;
-            process.env.DEMOSERVICE_PAYSTART_URL = localServerUrl;
+            process.env.SERVICE_URL = localServerUrl;
 
             whenPublicApiReceivesPost({
                 'amount': 4000,
@@ -94,7 +94,7 @@ portfinder.getPort(function (err, publicApiPort) {
             var description = 'payment description for success';
 
             process.env.PUBLICAPI_URL = publicApiMockUrl;
-            process.env.DEMOSERVICE_PAYSTART_URL = localServerUrl;
+            process.env.SERVICE_URL = localServerUrl;
 
             whenPublicApiReceivesPost( {
                 'amount': 5000,
