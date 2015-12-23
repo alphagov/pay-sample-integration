@@ -39,7 +39,7 @@ module.exports = {
       var paymentReference = randomIntNotInSession(req);
 
       if (req.query.authToken) {
-        req.demoservice_state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
+        req.state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
       } else {
         res.redirect(303, '/?invalidAuthToken=true');
         return;
@@ -66,7 +66,7 @@ module.exports = {
     app.post(PAYMENT_PATH, function (req, res) {
       logger.info('POST ' + PAYMENT_PATH);
       var paymentReference = req.body.paymentReference;
-      var successPage = process.env.DEMOSERVICE_PAYSTART_URL + SUCCESS_PATH + paymentReference;
+      var successPage = process.env.SERVICE_URL + SUCCESS_PATH + paymentReference;
 
       var paymentData = {
         headers: {
@@ -80,12 +80,12 @@ module.exports = {
         }
       };
 
-      if (req.demoservice_state[AUTH_TOKEN_PREFIX + paymentReference]) {
-        paymentData.headers.Authorization = "Bearer " + req.demoservice_state[AUTH_TOKEN_PREFIX + paymentReference];
+      if (req.state[AUTH_TOKEN_PREFIX + paymentReference]) {
+        paymentData.headers.Authorization = "Bearer " + req.state[AUTH_TOKEN_PREFIX + paymentReference];
       }
 
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
-      var errorMessage = 'Demo service failed to create charge';
+      var errorMessage = 'Sample service failed to create charge';
       client.post(publicApiUrl, paymentData, function (data, publicApiResponse) {
 
         logger.info('Publicapi response: ' + data);
@@ -94,7 +94,7 @@ module.exports = {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
           var chargeId = extractChargeId(frontendCardDetailsUrl.href);
 
-          req.demoservice_state[CHARGE_ID_PREFIX + paymentReference] = chargeId;
+          req.state[CHARGE_ID_PREFIX + paymentReference] = chargeId;
           logger.info('Redirecting user to: ' + frontendCardDetailsUrl.href);
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
@@ -119,12 +119,12 @@ module.exports = {
 
     app.get(SUCCESS_PATH + ':paymentReference', function (req, res) {
       var paymentReference = req.params.paymentReference;
-      var chargeId = req.demoservice_state[CHARGE_ID_PREFIX + paymentReference];
+      var chargeId = req.state[CHARGE_ID_PREFIX + paymentReference];
 
       var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + chargeId;
       var args = {
         headers: {'Accept': 'application/json',
-                  'Authorization': 'Bearer ' + req.demoservice_state[AUTH_TOKEN_PREFIX + paymentReference] }
+                  'Authorization': 'Bearer ' + req.state[AUTH_TOKEN_PREFIX + paymentReference] }
       };
 
       client.get(publicApiUrl, args, function (data, publicApiResponse) {
@@ -156,7 +156,7 @@ module.exports = {
       var theInt = -1;
       while (theInt < 0) {
         theInt = Math.floor(Math.random() * (1000 - 1) + 1);
-        if (req.demoservice_state[AUTH_TOKEN_PREFIX + theInt]) {
+        if (req.state[AUTH_TOKEN_PREFIX + theInt]) {
           theInt = -1;
         }
       }

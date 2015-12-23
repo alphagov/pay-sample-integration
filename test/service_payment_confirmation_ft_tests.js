@@ -1,4 +1,4 @@
-process.env.SESSION_ENCRYPTION_KEY = "Demo Service Key";
+process.env.SESSION_ENCRYPTION_KEY = "secret";
 
 var app = require(__dirname + '/../server.js').getApp;
 var request = require('supertest');
@@ -7,7 +7,7 @@ var portfinder = require('portfinder');
 
 var clientSessions = require("client-sessions");
 var sessionConfig = {
-  'cookieName': 'demoservice_state',
+  'cookieName': 'state',
   'secret':     process.env.SESSION_ENCRYPTION_KEY
 };
 
@@ -33,7 +33,7 @@ portfinder.getPort(function (err, publicApiPort) {
       var encryptedSession = clientSessions.util.encode(sessionConfig, sessionData);
 
         return request(app).get(successPath)
-          .set('Cookie','demoservice_state=' + encryptedSession)
+          .set('Cookie','state=' + encryptedSession)
           .set('Accept', 'application/json');
     }
 

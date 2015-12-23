@@ -1,4 +1,4 @@
-process.env.SESSION_ENCRYPTION_KEY = "Demo Service Key";
+process.env.SESSION_ENCRYPTION_KEY = "secret";
 
 var renderer = require(__dirname + '/utils/renderer.js').renderer;
 var app = require(__dirname + '/../server.js').getApp;
@@ -30,7 +30,7 @@ portfinder.getPort(function (err, publicApiPort) {
             .end(done);
         });
 
-        it('should redirect user back to Demo Service starting page if authToken is missing', function (done) {
+        it('should redirect user back to sample service starting page if authToken is missing', function (done) {
             getPaymentConfirmationWith('')
             .expect(303)
             .expect('Location', '/?invalidAuthToken=true')

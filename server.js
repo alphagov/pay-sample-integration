@@ -38,8 +38,8 @@ app.use(function (req, res, next) {
 });
 
 app.use(clientSessions({
-  cookieName: "demoservice_state",
-  secret: "Demo Service Key"
+  cookieName: "state",
+  secret: "secret"
 }));
 
 
