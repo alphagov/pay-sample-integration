@@ -24,9 +24,9 @@ describe('The payment success view', function() {
   it('should render the page correctly', function(done) {
     renderSuccessPage(templateData, function($) {
       $('#amount').text().should.equal(expectedAmountFormat);
-      $('#payment-reference').text().should.equal('Reference number: 100-2');
+      $('#payment-reference').text().should.equal('100-2');
       $('#confirmation-message').text().should.equal('Your payment has been successful');
-      // $('#payment-description').text().should.equal('some description');
+      $('#payment-description').text().should.equal('some description');
       done();
     });
   });
