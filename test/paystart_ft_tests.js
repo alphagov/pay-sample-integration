@@ -9,7 +9,7 @@ var cheerio = require('cheerio');
 var SERVICE_PATH = "/service/";
 var INVALID_AUTH_TOKEN_MSG = "Please enter a valid Authorization Token";
 
-portfinder.getPort(function (err, publicApiPort) {
+portfinder.getPort(function (err, payApiPort) {
 
     function getPaymentConfirmationWith(data) {
         return request(app).get(SERVICE_PATH + data);

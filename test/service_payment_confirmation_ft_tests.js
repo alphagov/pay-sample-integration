@@ -11,18 +11,18 @@ var sessionConfig = {
   'secret':     process.env.SESSION_ENCRYPTION_KEY
 };
 
-portfinder.getPort(function (err, publicApiPort) {
-    var publicApiMockUrl = 'http://localhost:' + publicApiPort;
+portfinder.getPort(function (err, payApiPort) {
+    var payApiMockUrl = 'http://localhost:' + payApiPort;
     var chargeReferenceId = 98765;
     var chargeId = '112233';
-    var publicApiGetPaymentsUrl = '/v1/payments/' + chargeId;
-    var publicApiMock = nock(publicApiMockUrl);
+    var payApiGetPaymentsUrl = '/v1/payments/' + chargeId;
+    var payApiMock = nock(payApiMockUrl);
 
     var completedPath = "/return/" + chargeReferenceId;
 
-    function whenPublicApiReceivesGetPayment() {
-        return publicApiMock.matchHeader('Accept', 'application/json')
-                            .get(publicApiGetPaymentsUrl);
+    function whenPayApiReceivesGetPayment() {
+        return payApiMock.matchHeader('Accept', 'application/json')
+                            .get(payApiGetPaymentsUrl);
     }
 
     function getReturnPageResponse() {
@@ -39,10 +39,10 @@ portfinder.getPort(function (err, publicApiPort) {
 
     describe('Payment workflow complete', function () {
         it('should show a success page when payment captured', function (done) {
-            process.env.PUBLICAPI_URL = publicApiMockUrl;
+            process.env.PAY_API_URL = payApiMockUrl;
             var amount = 3454;
 
-            whenPublicApiReceivesGetPayment()
+            whenPayApiReceivesGetPayment()
                 .reply(200, {
                     'payment_id': chargeId,
                     'amount': amount,
@@ -75,9 +75,9 @@ portfinder.getPort(function (err, publicApiPort) {
 
     describe('Payment workflow error', function () {
         it('should show an error page when payment-id invalid', function (done) {
-            process.env.PUBLICAPI_URL = publicApiMockUrl;
+            process.env.PAY_API_URL = payApiMockUrl;
 
-            whenPublicApiReceivesGetPayment()
+            whenPayApiReceivesGetPayment()
                 .reply(404, { 'message': 'some backend error' },
                             { 'Content-Type': 'application/json' }
             );
@@ -92,10 +92,10 @@ portfinder.getPort(function (err, publicApiPort) {
         });
 
         it('should show an error page when status not "SUCCEEDED"', function (done) {
-            process.env.PUBLICAPI_URL = publicApiMockUrl;
+            process.env.PAY_API_URL = payApiMockUrl;
             var amount = 3454;
 
-            whenPublicApiReceivesGetPayment()
+            whenPayApiReceivesGetPayment()
                 .reply(200, {
                     'payment_id': chargeId,
                     'amount': amount,

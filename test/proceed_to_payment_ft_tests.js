@@ -13,18 +13,18 @@ var sessionConfig = {
   'secret':     process.env.SESSION_ENCRYPTION_KEY
 };
 
-portfinder.getPort(function (err, publicApiPort) {
-    var publicApiMockUrl = 'http://localhost:' + publicApiPort;
+portfinder.getPort(function (err, payApiPort) {
+    var payApiMockUrl = 'http://localhost:' + payApiPort;
     var chargeId = '23144323';
     var paymentReference = '54321';
     var frontendCardDetailsPath = '/charge/' + chargeId;
-    var publicApiPaymentsUrl = '/v1/payments/';
-    var publicApiMock = nock(publicApiMockUrl);
+    var payApiPaymentsUrl = '/v1/payments/';
+    var payApiMock = nock(payApiMockUrl);
 
-    function whenPublicApiReceivesPost(data, token) {
-        return publicApiMock.matchHeader('Content-Type', 'application/json')
+    function whenPayApiReceivesPost(data, token) {
+        return payApiMock.matchHeader('Content-Type', 'application/json')
                             .matchHeader('Authorization', 'Bearer ' + token)
-                            .post(publicApiPaymentsUrl, data);
+                            .post(payApiPaymentsUrl, data);
     }
 
     function postProceedResponseWith(data, token) {
@@ -43,10 +43,10 @@ portfinder.getPort(function (err, publicApiPort) {
             var localServerUrl = 'http://this.server.url:3000';
             var description = 'payment description for failure';
 
-            process.env.PUBLICAPI_URL = publicApiMockUrl;
+            process.env.PAY_API_URL = payApiMockUrl;
             process.env.SERVICE_URL = localServerUrl;
 
-            whenPublicApiReceivesPost({
+            whenPayApiReceivesPost({
                 'amount': 4000,
                 'description': description,
                 'return_url': localServerUrl + '/return/' + paymentReference
@@ -67,10 +67,10 @@ portfinder.getPort(function (err, publicApiPort) {
             var localServerUrl = 'http://this.server.url:3000';
             var description = 'payment description for failure';
 
-            process.env.PUBLICAPI_URL = publicApiMockUrl;
+            process.env.PUBLICAPI_URL = payApiMockUrl;
             process.env.SERVICE_URL = localServerUrl;
 
-            whenPublicApiReceivesPost({
+            whenPayApiReceivesPost({
                 'amount': 4000,
                 'description': description,
                 'return_url': localServerUrl + '/return/' + paymentReference
@@ -93,10 +93,10 @@ portfinder.getPort(function (err, publicApiPort) {
             var localServerUrl = 'http://this.server.url:3000';
             var description = 'payment description for success';
 
-            process.env.PUBLICAPI_URL = publicApiMockUrl;
+            process.env.PAY_API_URL = payApiMockUrl;
             process.env.SERVICE_URL = localServerUrl;
 
-            whenPublicApiReceivesPost( {
+            whenPayApiReceivesPost( {
                 'amount': 5000,
                 'description': description,
                 'return_url': localServerUrl + '/return/' + paymentReference
