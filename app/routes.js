@@ -12,7 +12,7 @@ module.exports = {
     var SERVICE_PATH = "/service/";
     var PAYMENT_PATH = "/proceed-to-payment";
     var RETURN_PATH = "/return/";
-    var PUBLIC_API_PAYMENTS_PATH = '/v1/payments/';
+    var PAY_API_PAYMENTS_PATH = '/v1/payments/';
 
     function extractChargeId(frontEndRedirectionUrl) {
       var chargeIdWithOneTimeToken = frontEndRedirectionUrl.split('/').pop();
@@ -84,13 +84,13 @@ module.exports = {
         paymentData.headers.Authorization = "Bearer " + req.state[AUTH_TOKEN_PREFIX + paymentReference];
       }
 
-      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH;
+      var payApiUrl = process.env.PAY_API_URL + PAY_API_PAYMENTS_PATH;
       var errorMessage = 'Sample service failed to create charge';
-      client.post(publicApiUrl, paymentData, function (data, publicApiResponse) {
+      client.post(payApiUrl, paymentData, function (data, payApiResponse) {
 
-        logger.info('Publicapi response: ' + data);
+        logger.info('pay api response: ' + data);
 
-        if (publicApiResponse.statusCode == 201) {
+        if (payApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
           var chargeId = extractChargeId(frontendCardDetailsUrl.href);
 
@@ -101,7 +101,7 @@ module.exports = {
         }
 
         res.statusCode = 400;
-        if (publicApiResponse.statusCode == 401) {
+        if (payApiResponse.statusCode == 401) {
             errorMessage = 'Credentials are required to access this resource';
             res.statusCode = 401;
         }
@@ -110,7 +110,7 @@ module.exports = {
           'message': errorMessage
         });
       }).on('error', function (err) {
-        logger.error('Exception raised calling publicapi: ' + err);
+        logger.error('Exception raised calling pay api: ' + err);
         response(req, res, 'error', {
             'message': errorMessage
         });
@@ -121,14 +121,14 @@ module.exports = {
       var paymentReference = req.params.paymentReference;
       var chargeId = req.state[CHARGE_ID_PREFIX + paymentReference];
 
-      var publicApiUrl = process.env.PUBLICAPI_URL + PUBLIC_API_PAYMENTS_PATH + chargeId;
+      var payApiUrl = process.env.PAY_API_URL + PAY_API_PAYMENTS_PATH + chargeId;
       var args = {
         headers: {'Accept': 'application/json',
                   'Authorization': 'Bearer ' + req.state[AUTH_TOKEN_PREFIX + paymentReference] }
       };
 
-      client.get(publicApiUrl, args, function (data, publicApiResponse) {
-        if (publicApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {
+      client.get(payApiUrl, args, function (data, payApiResponse) {
+        if (payApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {
           var responseData = {
             'title': 'Payment confirmation',
             'confirmationMessage': 'Your payment has been successful',
