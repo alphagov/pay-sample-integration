@@ -11,7 +11,7 @@ module.exports = {
   bind: function (app) {
     var SERVICE_PATH = "/service/";
     var PAYMENT_PATH = "/proceed-to-payment";
-    var SUCCESS_PATH = "/success/";
+    var RETURN_PATH = "/return/";
     var PUBLIC_API_PAYMENTS_PATH = '/v1/payments/';
 
     function extractChargeId(frontEndRedirectionUrl) {
@@ -66,7 +66,7 @@ module.exports = {
     app.post(PAYMENT_PATH, function (req, res) {
       logger.info('POST ' + PAYMENT_PATH);
       var paymentReference = req.body.paymentReference;
-      var successPage = process.env.SERVICE_URL + SUCCESS_PATH + paymentReference;
+      var returnPage = process.env.SERVICE_URL + RETURN_PATH + paymentReference;
 
       var paymentData = {
         headers: {
@@ -76,7 +76,7 @@ module.exports = {
           'amount': parseInt(req.body.amount),
           'reference': req.body.reference,
           'description': req.body.description,
-          'return_url': successPage
+          'return_url': returnPage
         }
       };
 
@@ -117,7 +117,7 @@ module.exports = {
       });
     });
 
-    app.get(SUCCESS_PATH + ':paymentReference', function (req, res) {
+    app.get(RETURN_PATH + ':paymentReference', function (req, res) {
       var paymentReference = req.params.paymentReference;
       var chargeId = req.state[CHARGE_ID_PREFIX + paymentReference];
 
