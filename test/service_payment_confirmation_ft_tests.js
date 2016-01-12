@@ -14,8 +14,8 @@ var sessionConfig = {
 portfinder.getPort(function (err, payApiPort) {
     var payApiMockUrl = 'http://localhost:' + payApiPort;
     var chargeReferenceId = 98765;
-    var chargeId = '112233';
-    var payApiGetPaymentsUrl = '/v1/payments/' + chargeId;
+    var paymentId = '112233';
+    var payApiGetPaymentsUrl = '/v1/payments/' + paymentId;
     var payApiMock = nock(payApiMockUrl);
 
     var completedPath = "/return/" + chargeReferenceId;
@@ -28,7 +28,7 @@ portfinder.getPort(function (err, payApiPort) {
     function getReturnPageResponse() {
       var sessionData = {};
       sessionData['t_'+chargeReferenceId] = 'a-auth-token';
-      sessionData['c_'+chargeReferenceId] = chargeId;
+      sessionData['c_'+chargeReferenceId] = paymentId;
 
       var encryptedSession = clientSessions.util.encode(sessionConfig, sessionData);
 
@@ -44,7 +44,7 @@ portfinder.getPort(function (err, payApiPort) {
 
             whenPayApiReceivesGetPayment()
                 .reply(200, {
-                    'payment_id': chargeId,
+                    'payment_id': paymentId,
                     'amount': amount,
                     'reference': 'Test reference',
                     'description': 'Test description',
@@ -85,7 +85,7 @@ portfinder.getPort(function (err, payApiPort) {
             getReturnPageResponse()
                 .expect(200, {
                     'message': 'Sorry, your payment has failed. Please contact us with following reference number.',
-                    'paymentReference': chargeReferenceId + '-' + chargeId
+                    'paymentReference': chargeReferenceId + '-' + paymentId
                 })
                 .expect('Content-Type', 'application/json; charset=utf-8')
                 .end(done);
@@ -97,7 +97,7 @@ portfinder.getPort(function (err, payApiPort) {
 
             whenPayApiReceivesGetPayment()
                 .reply(200, {
-                    'payment_id': chargeId,
+                    'payment_id': paymentId,
                     'amount': amount,
                     'status': 'BLA_BLA',
                     'return_url': 'http://not.used.in/this/2324523',
@@ -114,7 +114,7 @@ portfinder.getPort(function (err, payApiPort) {
             getReturnPageResponse()
                 .expect(200, {
                   'message': 'Sorry, your payment has failed. Please contact us with following reference number.',
-                  'paymentReference': chargeReferenceId + '-' + chargeId
+                  'paymentReference': chargeReferenceId + '-' + paymentId
                 })
                 .expect('Content-Type', 'application/json; charset=utf-8')
                 .end(done);
