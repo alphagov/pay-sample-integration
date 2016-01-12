@@ -105,7 +105,8 @@ portfinder.getPort(function (err, payApiPort) {
                         'href': frontendCardDetailsPath,
                         'rel': 'next_url',
                         'method': 'GET'
-                        } ]
+                      } ],
+                    'payment_id': "paymentId1234567890",
                     });
 
             postProceedResponseWith( {

@@ -44,7 +44,7 @@ portfinder.getPort(function (err, payApiPort) {
 
             whenPayApiReceivesGetPayment()
                 .reply(200, {
-                    'paymentId': paymentId,
+                    'payment_id': paymentId,
                     'amount': amount,
                     'reference': 'Test reference',
                     'description': 'Test description',
@@ -97,7 +97,7 @@ portfinder.getPort(function (err, payApiPort) {
 
             whenPayApiReceivesGetPayment()
                 .reply(200, {
-                    'paymentId': paymentId,
+                    'payment_id': paymentId,
                     'amount': amount,
                     'status': 'BLA_BLA',
                     'return_url': 'http://not.used.in/this/2324523',
