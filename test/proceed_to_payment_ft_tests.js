@@ -49,7 +49,7 @@ portfinder.getPort(function (err, publicApiPort) {
             whenPublicApiReceivesPost({
                 'amount': 4000,
                 'description': description,
-                'return_url': localServerUrl + '/success/' + paymentReference
+                'return_url': localServerUrl + '/return/' + paymentReference
             }, '12345-67890-12345-67890').reply( 400, {
                 'message': 'Unknown gateway account: 11111'
             });
@@ -73,7 +73,7 @@ portfinder.getPort(function (err, publicApiPort) {
             whenPublicApiReceivesPost({
                 'amount': 4000,
                 'description': description,
-                'return_url': localServerUrl + '/success/' + paymentReference
+                'return_url': localServerUrl + '/return/' + paymentReference
             }, '12345-67890-12345-67890').reply(401, {
                 'message': 'Credentials are required to access this resource.'
             });
@@ -99,7 +99,7 @@ portfinder.getPort(function (err, publicApiPort) {
             whenPublicApiReceivesPost( {
                 'amount': 5000,
                 'description': description,
-                'return_url': localServerUrl + '/success/' + paymentReference
+                'return_url': localServerUrl + '/return/' + paymentReference
             },'12345-67890-12345-67890').reply( 201, {
                     'links': [ {
                         'href': frontendCardDetailsPath,

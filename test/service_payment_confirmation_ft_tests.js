@@ -18,21 +18,21 @@ portfinder.getPort(function (err, publicApiPort) {
     var publicApiGetPaymentsUrl = '/v1/payments/' + chargeId;
     var publicApiMock = nock(publicApiMockUrl);
 
-    var successPath = "/success/" + chargeReferenceId;
+    var completedPath = "/return/" + chargeReferenceId;
 
     function whenPublicApiReceivesGetPayment() {
         return publicApiMock.matchHeader('Accept', 'application/json')
                             .get(publicApiGetPaymentsUrl);
     }
 
-    function getSuccessPageResponse() {
+    function getReturnPageResponse() {
       var sessionData = {};
       sessionData['t_'+chargeReferenceId] = 'a-auth-token';
       sessionData['c_'+chargeReferenceId] = chargeId;
 
       var encryptedSession = clientSessions.util.encode(sessionConfig, sessionData);
 
-        return request(app).get(successPath)
+        return request(app).get(completedPath)
           .set('Cookie','state=' + encryptedSession)
           .set('Accept', 'application/json');
     }
@@ -60,7 +60,7 @@ portfinder.getPort(function (err, publicApiPort) {
                     }
                 );
 
-            getSuccessPageResponse()
+            getReturnPageResponse()
                 .expect(200, {
                     'title': 'Payment confirmation',
                     'confirmationMessage': 'Your payment has been successful',
@@ -82,7 +82,7 @@ portfinder.getPort(function (err, publicApiPort) {
                             { 'Content-Type': 'application/json' }
             );
 
-            getSuccessPageResponse()
+            getReturnPageResponse()
                 .expect(200, {
                     'message': 'Sorry, your payment has failed. Please contact us with following reference number.',
                     'paymentReference': chargeReferenceId + '-' + chargeId
@@ -111,7 +111,7 @@ portfinder.getPort(function (err, publicApiPort) {
                     }
                 );
 
-            getSuccessPageResponse()
+            getReturnPageResponse()
                 .expect(200, {
                   'message': 'Sorry, your payment has failed. Please contact us with following reference number.',
                   'paymentReference': chargeReferenceId + '-' + chargeId
