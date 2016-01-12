@@ -14,11 +14,6 @@ module.exports = {
     var RETURN_PATH = "/return/";
     var PAY_API_PAYMENTS_PATH = '/v1/payments/';
 
-    function extractChargeId(frontEndRedirectionUrl) {
-      var chargeIdWithOneTimeToken = frontEndRedirectionUrl.split('/').pop();
-      return chargeIdWithOneTimeToken.split('?')[0];
-    }
-
     app.get('/', function (req, res) {
       logger.info('GET /');
 
@@ -92,9 +87,9 @@ module.exports = {
 
         if (payApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
-          var chargeId = extractChargeId(frontendCardDetailsUrl.href);
+          var paymentId = data.paymentId;
 
-          req.state[CHARGE_ID_PREFIX + paymentReference] = chargeId;
+          req.state[CHARGE_ID_PREFIX + paymentReference] = paymentId;
           logger.info('Redirecting user to: ' + frontendCardDetailsUrl.href);
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
@@ -119,9 +114,9 @@ module.exports = {
 
     app.get(RETURN_PATH + ':paymentReference', function (req, res) {
       var paymentReference = req.params.paymentReference;
-      var chargeId = req.state[CHARGE_ID_PREFIX + paymentReference];
+      var paymentId = req.state[CHARGE_ID_PREFIX + paymentReference];
 
-      var payApiUrl = process.env.PAY_API_URL + PAY_API_PAYMENTS_PATH + chargeId;
+      var payApiUrl = process.env.PAY_API_URL + PAY_API_PAYMENTS_PATH + paymentId;
       var args = {
         headers: {'Accept': 'application/json',
                   'Authorization': 'Bearer ' + req.state[AUTH_TOKEN_PREFIX + paymentReference] }
@@ -141,7 +136,7 @@ module.exports = {
         }
         response(req, res, 'error', {
           'message': 'Sorry, your payment has failed. Please contact us with following reference number.',
-          'paymentReference': paymentReference + '-' + chargeId
+          'paymentReference': paymentReference + '-' + paymentId
         });
       });
     });
