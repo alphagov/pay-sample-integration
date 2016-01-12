@@ -12,5 +12,5 @@ npm start
 
 | Name | Example | Description |
 | ---- | ------- | ----------- |
-| PUBLICAPI_URL | `http://api.pay.service.gov.uk/v1/` | URL of GOV.UK Pay API endpoint. |
-| SERVICE_URL | `http://myapp.herokuapp.com/` | Publicly reachable URL of this service. Used to redirect back here after payment.. |
+| PUBLICAPI_URL | `https://api.pay.service.gov.uk/v1/` | URL of GOV.UK Pay API endpoint. |
+| SERVICE_URL | `https://myapp.herokuapp.com/` | Publicly reachable URL of this service. Used to redirect back here after payment.. |
