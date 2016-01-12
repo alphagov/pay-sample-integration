@@ -1,6 +1,6 @@
 {
   "name": "GOV.UK Pay sample service integration",
   "description": "GOV.UK Pay sample service integration",
-  "repository": "https://github.com/alphagov/pay-sample-service",
+  "repository": "https://github.com/alphagov/pay-sample-integration",
   "keywords": ["node", "express"]
 }

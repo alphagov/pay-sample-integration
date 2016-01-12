@@ -1,7 +1,7 @@
-# pay-sample-service
+# pay-sample-integration
 Example service integration for GOV.UK Pay customer service.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/alphagov/pay-sample-service/tree/master)
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
 ## Running GOV.UK Pay sample service
 
