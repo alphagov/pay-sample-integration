@@ -87,7 +87,7 @@ module.exports = {
 
         if (payApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
-          var paymentId = data.paymentId;
+          var paymentId = data.payment_id;
 
           req.state[CHARGE_ID_PREFIX + paymentReference] = paymentId;
           logger.info('Redirecting user to: ' + frontendCardDetailsUrl.href);
