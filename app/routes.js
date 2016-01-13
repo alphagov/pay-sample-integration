@@ -76,7 +76,7 @@ module.exports = {
       var errorMessage = 'Sample service failed to create charge';
       client.post(payApiUrl, paymentData, function (data, payApiResponse) {
 
-        logger.info('pay api response: ' + data);
+        logger.info('pay api response: ', data);
 
         if (payApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
