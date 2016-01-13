@@ -37,6 +37,7 @@
     "hogan.js": "3.0.2",
     "minimist": "0.0.8",
     "moment": "^2.10.3",
+    "morgan": "1.6.1",
     "node-rest-client": "^1.5.1",
     "node-sass": "3.2.0",
     "readdir": "0.0.6",
