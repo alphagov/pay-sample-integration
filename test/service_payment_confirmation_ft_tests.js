@@ -27,8 +27,7 @@ portfinder.getPort(function (err, payApiPort) {
 
     function getReturnPageResponse() {
       var sessionData = {};
-      sessionData['t_'+chargeReferenceId] = 'a-auth-token';
-      sessionData['c_'+chargeReferenceId] = paymentId;
+      sessionData[chargeReferenceId] = { 'at': 'a-auth-token', 'pid' : paymentId };
 
       var encryptedSession = clientSessions.util.encode(sessionConfig, sessionData);
 

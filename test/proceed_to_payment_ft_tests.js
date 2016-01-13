@@ -6,7 +6,6 @@ var nock = require('nock');
 var portfinder = require('portfinder');
 
 // session mocking
-var AUTH_TOKEN_PREFIX = "t_";
 var clientSessions = require("client-sessions");
 var sessionConfig = {
   'cookieName': 'state',
@@ -29,7 +28,7 @@ portfinder.getPort(function (err, payApiPort) {
 
     function postProceedResponseWith(data, token) {
         var sessionData = {};
-        sessionData[AUTH_TOKEN_PREFIX + data.paymentReference] = token;
+        sessionData[data.paymentReference] = { 'at': token };
         var encryptedSession = clientSessions.util.encode(sessionConfig, sessionData);
 
         return request(app).post('/proceed-to-payment')
