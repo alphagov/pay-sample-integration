@@ -15,8 +15,6 @@ module.exports = {
     var PAY_API_PAYMENTS_PATH = '/v1/payments/';
 
     app.get('/', function (req, res) {
-      logger.info('GET /');
-
       var data = {
         'service_path': SERVICE_PATH
       };
@@ -29,8 +27,6 @@ module.exports = {
     });
 
     app.get(SERVICE_PATH, function (req, res) {
-      logger.info('GET ' + SERVICE_PATH);
-
       var paymentReference = randomIntNotInSession(req);
 
       if (req.query.authToken) {
@@ -48,8 +44,6 @@ module.exports = {
     });
 
     app.post(SERVICE_PATH, function (req, res) {
-      logger.info('POST ' + SERVICE_PATH);
-
       if (req.body.authToken) {
         res.redirect(303, SERVICE_PATH + '?authToken=' + req.body.authToken);
       } else {
@@ -59,7 +53,6 @@ module.exports = {
     });
 
     app.post(PAYMENT_PATH, function (req, res) {
-      logger.info('POST ' + PAYMENT_PATH);
       var paymentReference = req.body.paymentReference;
       var returnPage = process.env.SERVICE_URL + RETURN_PATH + paymentReference;
 
@@ -83,14 +76,13 @@ module.exports = {
       var errorMessage = 'Sample service failed to create charge';
       client.post(payApiUrl, paymentData, function (data, payApiResponse) {
 
-        logger.info('pay api response: ' + data);
+        logger.info('pay api response: ', data);
 
         if (payApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
           var paymentId = data.payment_id;
 
           req.state[CHARGE_ID_PREFIX + paymentReference] = paymentId;
-          logger.info('Redirecting user to: ' + frontendCardDetailsUrl.href);
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
         }

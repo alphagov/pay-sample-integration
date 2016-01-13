@@ -9,6 +9,7 @@ var express_enforces_ssl = require('express-enforces-ssl');
 var helmet = require('helmet');
 var port = (process.env.PORT || 3000);
 var app = express();
+var morgan = require('morgan')
 
 var clientSessions = require("client-sessions");
 
@@ -36,6 +37,8 @@ app.use(function (req, res, next) {
   res.locals.assetPath = '/public/';
   next();
 });
+
+app.use(morgan(':method :url :status :res[location] :res[content-length] :response-time'))
 
 app.use(clientSessions({
   cookieName: "state",
