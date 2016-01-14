@@ -4,8 +4,6 @@ var response = require(__dirname + '/utils/response.js').response;
 
 var Client = require('node-rest-client').Client;
 var client = new Client();
-var AUTH_TOKEN_PREFIX = "t_";
-var CHARGE_ID_PREFIX = "c_";
 
 module.exports = {
   bind: function (app) {
@@ -27,10 +25,11 @@ module.exports = {
     });
 
     app.get(SERVICE_PATH, function (req, res) {
-      var paymentReference = randomIntNotInSession(req);
+      req.state.count = (req.state.count || 0) + 1;
+      var paymentReference = req.state.count;
 
       if (req.query.authToken) {
-        req.state[AUTH_TOKEN_PREFIX + paymentReference] = req.query.authToken;
+        req.state[paymentReference] = { 'at': req.query.authToken };
       } else {
         res.redirect(303, '/?invalidAuthToken=true');
         return;
@@ -68,9 +67,7 @@ module.exports = {
         }
       };
 
-      if (req.state[AUTH_TOKEN_PREFIX + paymentReference]) {
-        paymentData.headers.Authorization = "Bearer " + req.state[AUTH_TOKEN_PREFIX + paymentReference];
-      }
+      paymentData.headers.Authorization = "Bearer " + req.state[paymentReference].at;
 
       var payApiUrl = process.env.PAY_API_URL + PAY_API_PAYMENTS_PATH;
       var errorMessage = 'Sample service failed to create charge';
@@ -80,9 +77,9 @@ module.exports = {
 
         if (payApiResponse.statusCode == 201) {
           var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
-          var paymentId = data.payment_id;
 
-          req.state[CHARGE_ID_PREFIX + paymentReference] = paymentId;
+          req.state[paymentReference].pid = data.payment_id;
+
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
         }
@@ -106,12 +103,12 @@ module.exports = {
 
     app.get(RETURN_PATH + ':paymentReference', function (req, res) {
       var paymentReference = req.params.paymentReference;
-      var paymentId = req.state[CHARGE_ID_PREFIX + paymentReference];
+      var paymentId = req.state[paymentReference].pid;
 
       var payApiUrl = process.env.PAY_API_URL + PAY_API_PAYMENTS_PATH + paymentId;
       var args = {
         headers: {'Accept': 'application/json',
-                  'Authorization': 'Bearer ' + req.state[AUTH_TOKEN_PREFIX + paymentReference] }
+                  'Authorization': 'Bearer ' + req.state[paymentReference].at }
       };
 
       client.get(payApiUrl, args, function (data, payApiResponse) {
@@ -138,17 +135,5 @@ module.exports = {
         return link.rel === rel;
       });
     }
-
-    function randomIntNotInSession(req) {
-      var theInt = -1;
-      while (theInt < 0) {
-        theInt = Math.floor(Math.random() * (1000 - 1) + 1);
-        if (req.state[AUTH_TOKEN_PREFIX + theInt]) {
-          theInt = -1;
-        }
-      }
-      return theInt;
-    }
-
   }
 };
