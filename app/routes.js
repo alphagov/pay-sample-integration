@@ -1,5 +1,7 @@
 require('array.prototype.find');
 var logger = require('winston');
+var _ = require('lodash');
+var api = require(__dirname + '/utils/api.js');
 var response = require(__dirname + '/utils/response.js').response;
 
 var Client = require('node-rest-client').Client;
@@ -11,53 +13,24 @@ module.exports = {
     var PAYMENT_PATH = "/proceed-to-payment";
     var RETURN_PATH = "/return/";
     var PAY_API_PAYMENTS_PATH = '/v1/payments/';
-
-    app.get('/', function (req, res) {
-      var data = {
-        'service_path': SERVICE_PATH
-      };
-
-      if (req.query.invalidAuthToken) {
-        data.invalidAuthTokenMsg = 'Please enter a valid Authorization Token';
-      }
-
-      res.render('paystart', data);
-    });
-
+    
     app.get(SERVICE_PATH, function (req, res) {
-      req.state.count = (req.state.count || 0) + 1;
-      var paymentReference = req.state.count;
-
-      if (req.query.authToken) {
-        req.state[paymentReference] = { 'at': req.query.authToken };
-      } else {
-        res.redirect(303, '/?invalidAuthToken=true');
-        return;
-      }
-
       var data = {
-        'proceed_to_payment_path': PAYMENT_PATH,
-        'payment_reference': paymentReference
+        'auth_token': api.getKey(req),
+        'proceed_to_payment_path': PAYMENT_PATH
       };
+      
       res.render('service', data);
     });
-
-    app.post(SERVICE_PATH, function (req, res) {
-      if (req.body.authToken) {
-        res.redirect(303, SERVICE_PATH + '?authToken=' + req.body.authToken);
-      } else {
-        res.redirect(303, '/?invalidAuthToken=true');
-      }
-      return;
-    });
-
+    
     app.post(PAYMENT_PATH, function (req, res) {
       var paymentReference = req.body.paymentReference;
-      var returnPage = process.env.SERVICE_URL + RETURN_PATH + paymentReference;
-
-      var paymentData = {
+      var returnPage = getSelfUrl(req)  + RETURN_PATH + paymentReference;
+      var payApiUrl = api.getUrl(req) + PAY_API_PAYMENTS_PATH;
+      var paymentRequest = {
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          'Authorization' : 'Bearer ' + api.getKey(req)
         },
         data: {
           'amount': parseInt(req.body.amount),
@@ -66,37 +39,33 @@ module.exports = {
           'return_url': returnPage
         }
       };
-
-      paymentData.headers.Authorization = "Bearer " + req.state[paymentReference].at;
-
-      var payApiUrl = process.env.PAY_API_URL + PAY_API_PAYMENTS_PATH;
-      var errorMessage = 'Sample service failed to create charge';
-      client.post(payApiUrl, paymentData, function (data, payApiResponse) {
-
+      
+      client.post(payApiUrl, paymentRequest, function (data, payApiResponse) {
         logger.info('pay api response: ', data);
 
         if (payApiResponse.statusCode == 201) {
-          var frontendCardDetailsUrl = findLinkForRelation(data.links, 'next_url');
-
-          req.state[paymentReference].pid = data.payment_id;
-
+          var frontendCardDetailsUrl = findNextUrl(data);
+          req.state[paymentReference] = { pid: data.payment_id };
           res.redirect(303, frontendCardDetailsUrl.href);
           return;
         }
 
-        res.statusCode = 400;
         if (payApiResponse.statusCode == 401) {
-            errorMessage = 'Credentials are required to access this resource';
-            res.statusCode = 401;
+          res.statusCode = 401;
+          response(req, res, 'error', {
+            'message': 'Credentials are required to access this resource'
+          });
         }
-
-        response(req, res, 'error', {
-          'message': errorMessage
-        });
+        else {
+          res.statusCode = 400;
+          response(req, res, 'error', {
+            'message': 'Sample service failed to create charge'
+          }); 
+        }
       }).on('error', function (err) {
         logger.error('Exception raised calling pay api: ' + err);
         response(req, res, 'error', {
-            'message': errorMessage
+            'message': 'Sample service failed to create charge'
         });
       });
     });
@@ -104,14 +73,15 @@ module.exports = {
     app.get(RETURN_PATH + ':paymentReference', function (req, res) {
       var paymentReference = req.params.paymentReference;
       var paymentId = req.state[paymentReference].pid;
-
-      var payApiUrl = process.env.PAY_API_URL + PAY_API_PAYMENTS_PATH + paymentId;
-      var args = {
-        headers: {'Accept': 'application/json',
-                  'Authorization': 'Bearer ' + req.state[paymentReference].at }
+      var payApiUrl = api.getUrl(req) + PAY_API_PAYMENTS_PATH + paymentId;
+      var paymentRequest = {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ' + api.getKey(req)
+        }
       };
 
-      client.get(payApiUrl, args, function (data, payApiResponse) {
+      client.get(payApiUrl, paymentRequest, function (data, payApiResponse) {
         if (payApiResponse.statusCode == 200 && data.status === "SUCCEEDED") {
           var responseData = {
             'title': 'Payment confirmation',
@@ -129,11 +99,17 @@ module.exports = {
         });
       });
     });
-
-    function findLinkForRelation(links, rel) {
-      return links.find(function (link) {
-        return link.rel === rel;
-      });
+    
+    function getSelfUrl(req) {
+      return req.protocol + '://' + req.get('host');
+    }
+    
+    function findNextUrl(data) {
+      var next_url = _.get(data, "_links.next_url");
+      if (typeof next_url === 'undefined') {
+        throw Error("Resource doesn't provide a 'next_url' relational link: " + JSON.stringify(data));
+      }
+      return next_url;
     }
   }
 };
