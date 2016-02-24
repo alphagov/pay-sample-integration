@@ -51,6 +51,7 @@ portfinder.getPort(function (err, payApiPort) {
               whenPayApiReceivesPost({
                   'amount': 4000,
                   'description': description,
+                  'reference': paymentReference,
                   'return_url': localServerUrl + '/return/' + paymentReference
               }, '12345-67890-12345-67890').reply( 400, {
                   'message': 'Unknown gateway account: 11111'
@@ -59,7 +60,7 @@ portfinder.getPort(function (err, payApiPort) {
               postProceedResponseWith(server, {
                       'amount': '4000',
                       'description': description,
-                      'paymentReference': paymentReference
+                      'reference': paymentReference
               }, '12345-67890-12345-67890').expect(400, {
                   'message': 'Sample service failed to create charge'
               }).end(done);
@@ -75,6 +76,7 @@ portfinder.getPort(function (err, payApiPort) {
               whenPayApiReceivesPost({
                   'amount': 4000,
                   'description': description,
+                  'reference': paymentReference,
                   'return_url': localServerUrl + '/return/' + paymentReference
               }, '12345-67890-12345-67890').reply(401, {
                   'message': 'Credentials are required to access this resource.'
@@ -83,7 +85,7 @@ portfinder.getPort(function (err, payApiPort) {
               postProceedResponseWith(server, {
                       'amount': '4000',
                       'description': description,
-                      'paymentReference': paymentReference
+                      'reference': paymentReference
               }, '12345-67890-12345-67890').expect(401, {
                   'message': 'Credentials are required to access this resource'
               }).end(done);
@@ -101,6 +103,7 @@ portfinder.getPort(function (err, payApiPort) {
               whenPayApiReceivesPost({
                   'amount': 5000,
                   'description': description,
+                  'reference': paymentReference,
                   'return_url': localServerUrl + '/return/' + paymentReference
               }, '12345-67890-12345-67890').reply(201, {
                     '_links': {
@@ -115,7 +118,7 @@ portfinder.getPort(function (err, payApiPort) {
               postProceedResponseWith(server, {
                   'description': description,
                   'amount': '5000',
-                  'paymentReference': paymentReference
+                  'reference': paymentReference
               },'12345-67890-12345-67890').expect('Location', frontendCardDetailsPath)
                 .expect(303)
                 .end(done);

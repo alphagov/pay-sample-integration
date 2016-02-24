@@ -24,7 +24,7 @@ module.exports.bindRoutesTo = (app) => {
   }
   
   app.post(PAY_PATH, (req, res) => {
-    var paymentReference = req.body.paymentReference;
+    var paymentReference = req.body.reference;
     var returnPage = getSelfUrl(req)  + RETURN_PATH + paymentReference;
     var payApiUrl = api.getUrl(req) + PAY_API_PAYMENTS_PATH;
     var paymentRequest = {
