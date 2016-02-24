@@ -36,7 +36,7 @@ portfinder.getPort(function (err, payApiPort) {
 
     function postProceedResponseWith(testServer, data, token) {
         process.env.PAY_API_KEY = token;
-        return request(testServer).post('/proceed-to-payment')
+        return request(testServer).post('/pay')
                            .set('Accept', 'application/json')
                            .send(data);
     }
