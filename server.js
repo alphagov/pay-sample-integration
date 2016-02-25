@@ -11,7 +11,6 @@ var morgan = require('morgan')
 var clientSessions = require("client-sessions");
 
 var routes = require(__dirname + '/app/routes.js');
-require(__dirname + '/app/utils/string_formatters.js');
 
 app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
 

@@ -1,5 +1,6 @@
 var api = require(__dirname + '/../utils/api.js');
 var response = require(__dirname + '/../utils/response.js').response;
+var formatPrice = require('format-price').format;
 
 var Client = require('node-rest-client').Client;
 var client = new Client();
@@ -26,7 +27,7 @@ module.exports.bindRoutesTo = (app) => {
           'confirmationMessage': 'Your payment has been successful',
           'paymentReference': data.reference,
           'paymentDescription': data.description,
-          'formattedAmount': ("" + (data.amount / 100)).currency(),
+          'formattedAmount': formatPrice('en-GB', 'GBP', `${ (data.amount || 0) / 100 } `),
         };
         response(req, res, 'return', responseData);
         return;
