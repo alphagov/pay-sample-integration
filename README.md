@@ -14,4 +14,3 @@ npm start
 | Name | Example | Description |
 | ---- | ------- | ----------- |
 | PAY_API_URL | `https://api.pay.service.gov.uk/` | URL of GOV.UK Pay API endpoint. |
-| SERVICE_URL | `https://myapp.herokuapp.com/` | Publicly reachable URL of this service. Used to redirect back here after payment.. |

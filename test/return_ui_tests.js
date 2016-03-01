@@ -15,7 +15,7 @@ describe('The payment success view', function() {
   };
 
   function renderSuccessPage(templateData, checkFunction) {
-    renderer('success', templateData, function(htmlOutput) {
+    renderer('return', templateData, function(htmlOutput) {
       var $ = cheerio.load(htmlOutput);
       checkFunction($);
     });
