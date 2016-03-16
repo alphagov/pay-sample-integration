@@ -5,39 +5,42 @@
 {{$content}}
 
 <main id="content" role="main">
-  <div class="grid-row">
-    <div class="column-full">
-      <div class="content-wrapper">
-	  <h1 class="form-title">Proceed to payment</h1>
-          <div class="payment-summary">
-              <div class="inner">
-                  <h2>Payment summary</h2>
-                  <p><strong id="service-name">{{payment.serviceNameCapitalised}}</strong></p>
-                  <form class="form" action="{{ proceed_to_payment_path }}" method="post">
-                      <fieldset>
-                          <div class="form-group">
-                              <label for="description" class="form-label-bold">Payment description:</label>
-                              <input type="text" id="description" name="description" />
-                          </div>
-                          <div class="form-group">
-                              <label for="reference" class="form-label-bold">Payment reference:</label>
-                              <input type="text" id="reference" name="reference" />
-                          </div>
-                          <div class="form-group">
-                              <label for="amount" class="form-label-bold">Amount (in pence):</label>
-                              <input type="text" id="amount" name="amount" />
-                          </div>
-                          <input type="hidden" name="paymentReference" value="{{ payment_reference }}" />
-                          <div class="form-group">
-                              <input type="submit" id="submit-start-payment" name="submit-start-payment" value="Proceed to payment" class="button"/>
-                          </div>
-                      </fieldset>
-                  </form>
-              </div>
-          </div>
-      </div>
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="content-wrapper">
+                <h1 class="form-title">Proceed to payment</h1>
+                <div class="payment-summary">
+                    <div class="inner">
+                        <h2>Payment summary</h2>
+                        <p><strong id="service-name">{{payment.serviceNameCapitalised}}</strong></p>
+                        <form class="form" action="{{ proceed_to_payment_path }}" method="post">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label for="description" class="form-label-bold">Payment description:</label>
+                                    <input type="text" id="description" name="description" value="{{description}}"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reference" class="form-label-bold">Payment reference:</label>
+                                    <input type="text" id="reference" name="reference" value="{{reference}}"/>
+                                </div>
+                                <div class="form-group{{#invalidAmountMsg}} error{{/invalidAmountMsg}}">
+                                    <label for="amount" class="form-label-bold">Amount (in pence) TEST:</label>
+                                    <input type="text" id="amount" name="amount" />
+                                    {{#invalidAmountMsg}}
+                                    <span class="error-message" id="error-msg">{{invalidAmountMsg}}</span>
+                                    {{/invalidAmountMsg}}
+                                </div>
+                                <input type="hidden" name="paymentReference" value="{{ payment_reference }}" />
+                                <div class="form-group">
+                                    <input type="submit" id="submit-start-payment" name="submit-start-payment" value="Proceed to payment" class="button"/>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </main>
 
 {{/content}}

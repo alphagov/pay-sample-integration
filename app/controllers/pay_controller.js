@@ -1,6 +1,7 @@
 var logger = require('winston');
 var _ = require('lodash');
 var api = require(__dirname + '/../utils/api.js');
+var util = require(__dirname + '/../utils/util.js');
 var response = require(__dirname + '/../utils/response.js').response;
 
 var Client = require('node-rest-client').Client;
@@ -22,18 +23,28 @@ module.exports.bindRoutesTo = (app) => {
     }
     return next_url;
   }
-  
+
   app.post(PAY_PATH, (req, res) => {
     var paymentReference = req.body.reference;
     var returnPage = getSelfUrl(req)  + RETURN_PATH + paymentReference;
     var payApiUrl = api.getUrl(req) + PAY_API_PAYMENTS_PATH;
+    if (!util.isNumeric(req.body.amount)) {
+      var data = {
+        'auth_token': req.query.authToken,
+        'reference': req.body.reference,
+        'description': req.body.description,
+        'proceed_to_payment_path': PAY_PATH,
+        'invalidAmountMsg': 'Invalid amount value. Only integer values allowed'};
+      res.render("proceed", data);
+      return;
+    }
     var paymentRequest = {
       headers: {
         "Content-Type": "application/json",
         'Authorization' : 'Bearer ' + api.getKey(req)
       },
       data: {
-        'amount': parseInt(req.body.amount),
+        'amount': req.body.amount,
         'reference': req.body.reference,
         'description': req.body.description,
         'return_url': returnPage

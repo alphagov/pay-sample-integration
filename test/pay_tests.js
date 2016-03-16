@@ -49,7 +49,7 @@ portfinder.getPort(function (err, payApiPort) {
               process.env.PAY_API_URL = payApiMockUrl;
 
               whenPayApiReceivesPost({
-                  'amount': 4000,
+                  'amount': '4000',
                   'description': description,
                   'reference': paymentReference,
                   'return_url': localServerUrl + '/return/' + paymentReference
@@ -74,7 +74,7 @@ portfinder.getPort(function (err, payApiPort) {
               process.env.PAY_API_URL = payApiMockUrl;
               
               whenPayApiReceivesPost({
-                  'amount': 4000,
+                  'amount': '4000',
                   'description': description,
                   'reference': paymentReference,
                   'return_url': localServerUrl + '/return/' + paymentReference
@@ -101,7 +101,7 @@ portfinder.getPort(function (err, payApiPort) {
               process.env.PAY_API_URL = payApiMockUrl;
 
               whenPayApiReceivesPost({
-                  'amount': 5000,
+                  'amount': '5000',
                   'description': description,
                   'reference': paymentReference,
                   'return_url': localServerUrl + '/return/' + paymentReference
