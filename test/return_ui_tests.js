@@ -49,3 +49,24 @@ describe('The payment error view', function(){
     });
   });
 });
+
+describe('The sample service', function(){
+
+  var templateData = {
+    'auth_token': '7430b010-4dcc-412e-bd77-a19377bc8e30',
+    'reference': 'test-reference',
+    'description': 'test-description',
+    'proceed_to_payment_path': '/pay',
+    'invalidAmountMsg': 'Invalid amount value. Only integer values allowed'
+  };
+
+  it('should validate the amount value ', function(done){
+    renderer('proceed', templateData, function(htmlOutput) {
+      var $ = cheerio.load(htmlOutput);
+      $('#error-msg').text().should.equal('Invalid amount value. Only integer values allowed');
+      $('#description').val().should.equal('test-description');
+      $('#reference').val().should.equal('test-reference');
+      done();
+    });
+  });
+});
