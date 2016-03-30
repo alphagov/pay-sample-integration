@@ -22,6 +22,11 @@
       }
     }
 
+    span {
+      display: block;
+      margin-bottom: -2px;
+    }
+
     @include media(tablet) {
       width: 200px;
     }
