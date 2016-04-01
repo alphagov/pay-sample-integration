@@ -5,13 +5,7 @@ var http = require('http');
 var request = require('supertest');
 var nock = require('nock');
 var portfinder = require('portfinder');
-
-// session mocking
-var clientSessions = require("client-sessions");
-var sessionConfig = {
-  'cookieName': 'state',
-  'secret':     process.env.SESSION_ENCRYPTION_KEY
-};
+var cheerio = require('cheerio');
 
 portfinder.getPort(function (err, payApiPort) {
     var payApiMockUrl = 'http://localhost:' + payApiPort;
@@ -94,35 +88,52 @@ portfinder.getPort(function (err, payApiPort) {
     });
 
     describe('Proceed payment scenario', function () {
-        it('should respond with redirect URL for payment card capture view', function (done) {
+        it('should respond with Proceed page when payment is created', function (done) {
             withTestAppServer(function(server) {
-              var localServerUrl = 'http://127.0.0.1:' + server.address().port;
-              var description = 'payment description for success';
-              process.env.PAY_API_URL = payApiMockUrl;
+                var localServerUrl = 'http://127.0.0.1:' + server.address().port;
+                var description = 'payment description for success';
+                var tokenId = 'this-is-an-ott-to-pay';
+                process.env.PAY_API_URL = payApiMockUrl;
 
-              whenPayApiReceivesPost({
-                  'amount': '5000',
-                  'description': description,
-                  'reference': paymentReference,
-                  'return_url': localServerUrl + '/return/' + paymentReference
-              }, '12345-67890-12345-67890').reply(201, {
+                whenPayApiReceivesPost({
+                    'amount': '5000',
+                    'description': description,
+                    'reference': paymentReference,
+                    'return_url': localServerUrl + '/return/' + paymentReference
+                }, '12345-67890-12345-67890').reply(201, {
+                    'amount': '5000',
+                    'description': description,
+                    'reference': paymentReference,
                     '_links': {
-                      "next_url": {
-                          'href': frontendCardDetailsPath,
-                          'method': 'GET'
-                      },
-                      'payment_id': "paymentId1234567890"
-                  }
-              });
+                        "next_url_post": {
+                            'href': frontendCardDetailsPath,
+                            'method': 'POST',
+                            'params': { 
+                                'chargeTokenId': tokenId
+                            }
+                        },
+                        'payment_id': "paymentId1234567890"
+                    }
+                });
 
-              postProceedResponseWith(server, {
-                  'description': description,
-                  'amount': '5000',
-                  'reference': paymentReference
-              },'12345-67890-12345-67890').expect('Location', frontendCardDetailsPath)
-                .expect(303)
-                .end(done);
-          });
+                postProceedResponseWith(server, {
+                    'description': description,
+                    'amount': '5000',
+                    'reference': paymentReference,
+                    'integration': 'POST'
+                },'12345-67890-12345-67890')
+                    .expect(200)
+                    .expect('Content-Type', 'text/html; charset=utf-8')
+                    .expect(function(res) {
+                        var $ = cheerio.load(res.text);
+                        $('#payment-description').text().should.equal(description);
+                        $('#payment-reference').text().should.equal(paymentReference);
+                        $('#submit-payment-form').attr('action').should.equal(frontendCardDetailsPath);
+                        $('#charge-token-id').val().should.equal(tokenId);
+                        $('#amount').text().should.equal('£50.00');
+                    })
+                    .end(done);
+            });
         });
     });
 });

@@ -3,6 +3,7 @@ var _ = require('lodash');
 var api = require(__dirname + '/../utils/api.js');
 var util = require(__dirname + '/../utils/util.js');
 var response = require(__dirname + '/../utils/response.js').response;
+var formatPrice = require('format-price').format;
 
 var Client = require('node-rest-client').Client;
 var client = new Client();
@@ -15,15 +16,15 @@ module.exports.bindRoutesTo = (app) => {
   function getSelfUrl(req) {
     return req.protocol + '://' + req.get('host');
   }
-  
-  function findNextUrl(data) {
-    var next_url = _.get(data, "_links.next_url");
-    if (typeof next_url === 'undefined') {
-      throw Error("Resource doesn't provide a 'next_url' relational link: " + JSON.stringify(data));
-    }
-    return next_url;
-  }
 
+  function findNextUrlPost(data) {
+    var next_url_post = _.get(data, "_links.next_url_post");
+    if (typeof next_url_post === 'undefined') {
+      throw Error("Resource doesn't provide a 'next_url_post' relational link: " + JSON.stringify(data));
+    }
+    return next_url_post;
+  }
+  
   app.post(PAY_PATH, (req, res) => {
     var paymentReference = req.body.reference;
     var returnPage = getSelfUrl(req)  + RETURN_PATH + paymentReference;
@@ -50,17 +51,23 @@ module.exports.bindRoutesTo = (app) => {
         'return_url': returnPage
       }
     };
-    
+
+  console.log('Making a payment to: ' + payApiUrl);
     client.post(payApiUrl, paymentRequest, (data, payApiResponse) => {
       logger.info('pay api response: ', data);
-
       if (payApiResponse.statusCode == 201) {
-        var frontendCardDetailsUrl = findNextUrl(data);
         req.state[paymentReference] = { pid: data.payment_id };
-        res.redirect(303, frontendCardDetailsUrl.href);
+        var frontendCardDetailsUrlPost = findNextUrlPost(data);
+        var responseData = {
+          'reference': data.reference,
+          'description': data.description,
+          'formattedAmount': formatPrice('en-GB', 'GBP', `${ (data.amount || 0) / 100 } `),
+          'submit_payment_url': frontendCardDetailsUrlPost.href,
+          'token_id': frontendCardDetailsUrlPost.params.chargeTokenId
+        };
+        res.render('submit', responseData);
         return;
       }
-
       if (payApiResponse.statusCode == 401) {
         res.statusCode = 401;
         response(req, res, 'error', {
