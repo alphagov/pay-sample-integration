@@ -1,9 +1,9 @@
 module.exports = {
-  getKey: function(req) {
+  getKey: function() {
     return process.env.PAY_API_KEY;
   },
   
-  getUrl: function(req) {
+  getUrl: function() {
     return process.env.PAY_API_URL;
   }
 };

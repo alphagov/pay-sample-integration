@@ -9,6 +9,19 @@
         <div class="column-full">
             <div class="content-wrapper">
                 <h1 class="form-title">Set up payment</h1>
+
+                {{#lastPayment.next_url}}
+                <div class="outer">
+                    <h2>Last payment summary</h2>
+
+                    <p> Payment description: <strong id="last-payment-reference">{{lastPayment.reference}}</strong></p>
+                    <p> Payment reference: <strong id="last-payment-description">{{lastPayment.description}}</strong> </p>
+                    <p> Amount: <strong id="last-payment-amount">{{lastPayment.amount}}</strong></p>
+                    <div class="form-group">
+                        <a id="last-payment-resume" class="button" href="{{lastPayment.next_url}}">Resume payment</a>
+                    </div>
+                </div>
+                {{/lastPayment.next_url}}
                 <div class="payment-summary">
                     <div class="inner">
                         <h2>Payment summary</h2>
