@@ -47,7 +47,7 @@ module.exports.bindRoutesTo = (app) => {
         'Authorization': 'Bearer ' + api.getKey(req)
       },
       data: {
-        'amount': req.body.amount,
+        'amount': parseInt(req.body.amount),
         'reference': req.body.reference,
         'description': req.body.description,
         'return_url': returnPage
