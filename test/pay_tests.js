@@ -43,7 +43,7 @@ portfinder.getPort(function (err, payApiPort) {
               process.env.PAY_API_URL = payApiMockUrl;
 
               whenPayApiReceivesPost({
-                  'amount': '4000',
+                  'amount': 4000,
                   'description': description,
                   'reference': paymentReference,
                   'return_url': localServerUrl + '/return/' + paymentReference
@@ -52,7 +52,7 @@ portfinder.getPort(function (err, payApiPort) {
               });
 
               postProceedResponseWith(server, {
-                      'amount': '4000',
+                      'amount': 4000,
                       'description': description,
                       'reference': paymentReference
               }, '12345-67890-12345-67890').expect(400, {
@@ -68,7 +68,7 @@ portfinder.getPort(function (err, payApiPort) {
               process.env.PAY_API_URL = payApiMockUrl;
               
               whenPayApiReceivesPost({
-                  'amount': '4000',
+                  'amount': 4000,
                   'description': description,
                   'reference': paymentReference,
                   'return_url': localServerUrl + '/return/' + paymentReference
@@ -77,7 +77,7 @@ portfinder.getPort(function (err, payApiPort) {
               });
               
               postProceedResponseWith(server, {
-                      'amount': '4000',
+                      'amount': 4000,
                       'description': description,
                       'reference': paymentReference
               }, '12345-67890-12345-67890').expect(401, {
@@ -96,12 +96,12 @@ portfinder.getPort(function (err, payApiPort) {
                 process.env.PAY_API_URL = payApiMockUrl;
 
                 whenPayApiReceivesPost({
-                    'amount': '5000',
+                    'amount': 5000,
                     'description': description,
                     'reference': paymentReference,
                     'return_url': localServerUrl + '/return/' + paymentReference
                 }, '12345-67890-12345-67890').reply(201, {
-                    'amount': '5000',
+                    'amount': 5000,
                     'description': description,
                     'reference': paymentReference,
                     '_links': {
@@ -118,7 +118,7 @@ portfinder.getPort(function (err, payApiPort) {
 
                 postProceedResponseWith(server, {
                     'description': description,
-                    'amount': '5000',
+                    'amount': 5000,
                     'reference': paymentReference,
                     'integration': 'POST'
                 },'12345-67890-12345-67890')
