@@ -47,7 +47,10 @@ portfinder.getPort(function (err, payApiPort) {
                     'amount': amount,
                     'reference': 'Test reference',
                     'description': 'Test description',
-                    'status': 'SUCCEEDED',
+                    'state': {
+                      'status' : 'confirmed',
+                      'finished': true
+                    },
                     'return_url': 'http://not.used.in/this/'+ chargeReferenceId,
                     'links': [ {
                                 'href': 'http://also.irrelevant.com/',
@@ -90,7 +93,7 @@ portfinder.getPort(function (err, payApiPort) {
                 .end(done);
         });
 
-        it('should show an error page when status not "SUCCEEDED"', function (done) {
+        it('should show an error page when status not "confirmed"', function (done) {
             process.env.PAY_API_URL = payApiMockUrl;
             var amount = 3454;
 
@@ -98,7 +101,10 @@ portfinder.getPort(function (err, payApiPort) {
                 .reply(200, {
                     'payment_id': paymentId,
                     'amount': amount,
-                    'status': 'BLA_BLA',
+                    'state': {
+                      'status' : 'failed',
+                      'finished': true
+                    },
                     'return_url': 'http://not.used.in/this/2324523',
                     'links': [ {
                                 'href': 'http://also.irrelevant.com/',
