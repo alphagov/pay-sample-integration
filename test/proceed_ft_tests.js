@@ -53,7 +53,10 @@ portfinder.getPort(function (err, payApiPort) {
           'amount': amount,
           'reference': 'Test reference',
           'description': 'Test description',
-          'status': 'SUCCEEDED',
+          'state': {
+            'status' : 'confirmed',
+            'finished': true
+          },
           'return_url': 'http://not.used.in/this/' + chargeReferenceId,
           '_links': {
             "self": {
