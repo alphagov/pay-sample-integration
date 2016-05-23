@@ -22,7 +22,7 @@ module.exports.bindRoutesTo = (app) => {
       };
     
       client.get(payApiUrl, paymentRequest, (data, payApiResponse) => {
-        if (payApiResponse.statusCode == 200 && (data.state.status === "confirmed" || data.state.status === "captured" || data.state.status === "success")) {
+        if ((payApiResponse.statusCode) == 200 && (data.state.status === "success")) {
           var responseData = {
             'title': 'Payment confirmation',
             'confirmationMessage': 'Your payment has been successful',

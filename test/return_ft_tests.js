@@ -37,7 +37,7 @@ portfinder.getPort(function (err, payApiPort) {
     }
 
     describe('Payment workflow complete', function () {
-        it('should show a success page when payment captured', function (done) {
+        it('should show a success page when payment successful', function (done) {
             process.env.PAY_API_URL = payApiMockUrl;
             var amount = 3454;
 
@@ -48,7 +48,7 @@ portfinder.getPort(function (err, payApiPort) {
                     'reference': 'Test reference',
                     'description': 'Test description',
                     'state': {
-                      'status' : 'confirmed',
+                      'status' : 'success',
                       'finished': true
                     },
                     'return_url': 'http://not.used.in/this/'+ chargeReferenceId,
