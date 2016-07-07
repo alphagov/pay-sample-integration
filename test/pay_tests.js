@@ -12,7 +12,7 @@ portfinder.getPort(function (err, payApiPort) {
     var paymentId = '23144323';
     var paymentReference = '54321';
     var frontendCardDetailsPath = '/charge/' + paymentId;
-    var payApiPaymentsUrl = '/v1/payments/';
+    var payApiPaymentsUrl = '/v1/payments';
     var payApiMock = nock(payApiMockUrl);
 
     function withTestAppServer(done) {

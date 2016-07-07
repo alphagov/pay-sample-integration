@@ -42,7 +42,7 @@ portfinder.getPort(function (err, payApiPort) {
 
     before(function() {
       process.env.PAY_API_URL = payApiMockUrl;
-    })
+    });
 
     it('should show the last payment resumable', function (done) {
       var amount = 3454;
