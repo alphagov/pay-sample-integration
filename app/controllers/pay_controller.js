@@ -11,7 +11,7 @@ var client = new Client();
 module.exports.bindRoutesTo = (app) => {
   var PAY_PATH = "/pay";
   var RETURN_PATH = "/return/";
-  var PAY_API_PAYMENTS_PATH = '/v1/payments/';
+  var PAY_API_PAYMENTS_PATH = '/v1/payments';
 
   app.post(PAY_PATH, (req, res) => {
     var PAY_API_URL = api.getUrl(req) + PAY_API_PAYMENTS_PATH;
@@ -54,7 +54,7 @@ module.exports.bindRoutesTo = (app) => {
       }
     };
 
-    logger.info('Making a payment to: ' + PAY_API_URL);
+    logger.info('Making a payment to: ' + PAY_API_URL + ' with data: ' + JSON.stringify(paymentRequest.data));
     client.post(PAY_API_URL, paymentRequest, (data, payApiResponse) => {
       logger.info('pay api response: ', data);
       if (payApiResponse.statusCode == 201) {
