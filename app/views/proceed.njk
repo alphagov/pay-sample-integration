@@ -1,19 +1,19 @@
-{{<layout}}
+{% extends "./layout.njk" %}
 
-{{$pageTitle}}Set up payment{{/pageTitle}}
+{% block page_title %}
+    Set up payment
+{% endblock %}
 
-{{$content}}
+{% block content %}
 
 <main id="content" role="main">
     <div class="grid-row">
         <div class="column-full">
             <div class="content-wrapper">
                 <h1 class="form-title">Set up payment</h1>
-
-                {{#lastPayment.next_url}}
+                {% if lastPayment.next_url %}
                 <div class="outer">
                     <h2>Last payment summary</h2>
-
                     <p> Payment description: <strong id="last-payment-reference">{{lastPayment.reference}}</strong></p>
                     <p> Payment reference: <strong id="last-payment-description">{{lastPayment.description}}</strong> </p>
                     <p> Amount: <strong id="last-payment-amount">{{lastPayment.amount}}</strong></p>
@@ -21,7 +21,7 @@
                         <a id="last-payment-resume" class="button" href="{{lastPayment.next_url}}">Resume payment</a>
                     </div>
                 </div>
-                {{/lastPayment.next_url}}
+                {% endif %}
                 <div class="payment-summary">
                     <div class="inner">
                         <h2>Payment summary</h2>
@@ -35,12 +35,12 @@
                                     <label for="reference" class="form-label-bold">Payment reference:</label>
                                     <input type="text" id="reference" name="reference" value="{{reference}}"/>
                                 </div>
-                                <div class="form-group{{#invalidAmountMsg}} error{{/invalidAmountMsg}}">
+                                <div class="form-group{% if invalidAmountMsg %} error{% endif %}">
                                     <label for="amount" class="form-label-bold">Amount (in pence):</label>
                                     <input type="text" id="amount" name="amount" />
-                                    {{#invalidAmountMsg}}
+                                    {% if invalidAmountMsg %}
                                     <span class="error-message" id="error-msg">{{invalidAmountMsg}}</span>
-                                    {{/invalidAmountMsg}}
+                                    {% endif %}
                                 </div>
                                 <input type="hidden" name="paymentReference" value="{{ payment_reference }}" />
                                 <div class="form-group">
@@ -54,7 +54,4 @@
         </div>
     </div>
 </main>
-
-{{/content}}
-
-{{/layout}}
+{% endblock %}

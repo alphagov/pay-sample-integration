@@ -1,8 +1,10 @@
-{{<layout}}
+{% extends "./layout.njk" %}
 
-{{$pageTitle}}Proceed to payment{{/pageTitle}}
+{% block page_title %}
+  Proceed to payment
+{% endblock %}
 
-{{$content}}
+{% block content %}
 <main id="content" role="main">
     <div class="grid-row">
         <div class="column-full">
@@ -38,6 +40,4 @@
         </div>
     </div>
 </main>
-{{/content}}
-
-{{/layout}}
+{% endblock %}

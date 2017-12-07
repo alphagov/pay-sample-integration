@@ -1,0 +1,15 @@
+{% extends "../../govuk_modules/govuk_template/views/layouts/govuk_template.njk" %}
+
+  {% block head %}
+    {% include "includes/head.njk" %}
+  {% endblock %}
+
+  {% block proposition_header %}
+    {% include "includes/propositional_navigation.njk" %}
+  {% endblock %}
+
+  {% block header_class %}with-proposition{% endblock %}
+
+  {% block body_end %}
+    {% include "includes/scripts.njk" %}
+  {% endblock %}

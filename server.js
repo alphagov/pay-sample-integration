@@ -9,14 +9,23 @@ var port = (process.env.PORT || 3000);
 var app = express();
 var morgan = require('morgan')
 var clientSessions = require("client-sessions");
+const nunjucks = require('nunjucks')
 
 var routes = require(__dirname + '/app/routes.js');
 
-app.engine('html', require(__dirname + '/lib/template-engine.js').__express);
+const nunjucksEnvironment = nunjucks.configure([
+  path.join(__dirname + '/govuk_modules/govuk_template/views/layouts'),
+  path.join(__dirname, '/app/views')
+], {
+  express: app, // the express app that nunjucks should install to
+  autoescape: true, // controls if output with dangerous characters are escaped automatically
+  throwOnUndefined: false, // throw errors when outputting a null/undefined value
+  trimBlocks: true, // automatically remove trailing newlines from a block/tag
+  lstripBlocks: true // automatically remove leading whitespace from a block/tag
+})
 
-app.set('view engine', 'html');
-app.set('vendorViews', __dirname + '/govuk_modules/govuk_template/views/layouts');
-app.set('views', __dirname + '/app/views');
+// Set view engine
+app.set('view engine', 'njk')
 
 app.use(morgan(':method :url :status :res[location] :res[content-length] :response-time'))
 
@@ -35,7 +44,7 @@ app.use('/public', express.static(__dirname + '/govuk_modules/govuk_template/ass
 app.use('/public', express.static(__dirname + '/govuk_modules/govuk_frontend_toolkit'));
 app.use(favicon(path.join(__dirname, 'govuk_modules', 'govuk_template', 'assets', 'images','favicon.ico')));
 app.use(function (req, res, next) {
-  res.locals.assetPath = '/public/';
+  res.locals.asset_path = '/public/';
   next();
 });
 

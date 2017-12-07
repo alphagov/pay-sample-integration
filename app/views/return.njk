@@ -1,9 +1,10 @@
-{{<layout}}
+{% extends "./layout.njk" %}
 
-{{$pageTitle}}{{title}}{{/pageTitle}}
+{% block page_title %}
+  {{title}}
+{% endblock %}
 
-{{$content}}
-
+{% block content %}
 <main id="content" role="main">
     <div class="grid-row">
         <div class="column-full">
@@ -12,9 +13,7 @@
                 <h2 id="confirmation-message" style="font-size: 30px">{{confirmationMessage}}</h2>
                 <div class="outer">
                     <p> We will email you a receipt shortly</p>
-
                     <h2>Payment summary</h2>
-
                     <p> Reference number: <strong id="payment-reference">{{paymentReference}}</strong></p>
                     <p> Payment for: <strong id="payment-description">{{paymentDescription}}</strong> </p>
                     <p> Amount paid: <span id="amount">{{formattedAmount}}</span></p>
@@ -26,7 +25,4 @@
         </div>
     </div>
 </main>
-
-{{/content}}
-
-{{/layout}}
+{% endblock %}

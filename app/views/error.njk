@@ -1,0 +1,14 @@
+{% extends "./layout.njk" %}
+
+{% block page_title %}
+  An error occurred
+{% endblock %}
+
+{% block content %}
+<main id="content" role="main">
+  <h3>An error occurred:</h3>
+  <div id="error-msg">{{message}}</div>
+  <div id="payment-reference">{{paymentReference}}</div>
+</main>
+{% endblock %}
+
