@@ -1,4 +1,7 @@
 # pay-sample-integration
+
+> As of September 2021 this repository is no longer actively maintained by the GOV.UK Pay team.
+
 Example service integration for GOV.UK Pay customer service.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
